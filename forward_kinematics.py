@@ -55,13 +55,13 @@ def relative_pos(current, parent): #joint position relative to *parent*
 ######## finding position of current joint ####
 parent = rjoint_3
 # set rotation matrix of parent (identity)
-ex = vector(1, 0, 0)
+ex = vector(1,0,0)
 ey = vector(0,1,0)
 ez = vector(0,0,1)
 parent_RM = [ex, ey, ez] #x, y, z 
 #print("A[:,0] =",parent_RM[:,0]) # First Column
 b1 = relative_pos(rjoint_4.pos,parent.pos)
-
+print("rjoint_4 pos = ",rjoint_4.pos) 
 #uLINK(mom).R * uLINK(j).b
 # cant do dot product on 3x3 vector, so seperate operations, make into vector parent_RM_mult_b that is 1x3
 parent_RM_mult_b = vector(dot(parent_RM[0], b1), dot(parent_RM[1], b1), dot(parent_RM[2], b1))
@@ -86,7 +86,7 @@ UZ =vector(0,0,1)
 print("Ux one= ",UX.x)
 eye = [[1,0,0],[0,1,0],[0,0,1]] #for rodrigues
 
-def Rodrigues(joint_axis, joint_angle): #joint position relative to *parent*
+def Rodrigues(joint_axis, joint_angle): #rotation matrix from angular velocity
     #do we need norm?
     #norm_axis = norm(joint_axis) 
     th = joint_angle
@@ -102,7 +102,7 @@ def RMtoArray(vect_list): #make into array so can multiply as array
     toArray = np.array([[vect_list[0].x, vect_list[0].y,vect_list[0].z],[vect_list[1].x, vect_list[1].y,vect_list[1].z],[vect_list[2].x, vect_list[2].y,vect_list[2].z]])
     return toArray
 
-current_RM = np.dot(RMtoArray(parent_RM), Rodrigues(UX, 5))
+current_RM = np.dot(RMtoArray(parent_RM), Rodrigues(UX, 0))
 
 print("current RM= ",current_RM)
 
