@@ -54,10 +54,10 @@ def relative_pos(current, parent): #joint position relative to *parent*
 
 ######## finding position of current joint ####
 parent = rjoint_3
-# set rotation matrix of parent (identity)
+# set rotation matrix of parent (may be identity)
 ex = vector(1,0,0)
-ey = vector(0,1,0)
-ez = vector(0,0,1)
+ey = vector(0,0,1)
+ez = vector(0,-1,0)
 parent_RM = [ex, ey, ez] #x, y, z 
 #print("A[:,0] =",parent_RM[:,0]) # First Column
 b1 = relative_pos(rjoint_4.pos,parent.pos)
@@ -68,6 +68,10 @@ parent_RM_mult_b = vector(dot(parent_RM[0], b1), dot(parent_RM[1], b1), dot(pare
 
 #uLINK(j).p = uLINK(mom).R * uLINK(j).b + uLINK(mom).p;
 rjoint_4.pos = parent_RM_mult_b + parent.pos 
+
+b2 = relative_pos(rleg_3.pos,parent.pos)
+parent_RM_mult_b2 = vector(dot(parent_RM[0], b2), dot(parent_RM[1], b2), dot(parent_RM[2], b2))
+rleg_3.pos = parent_RM_mult_b2 + parent.pos 
 
 print("parentRM = ",parent_RM) # all
 print("b1 = ",b1) # three
@@ -102,9 +106,46 @@ def RMtoArray(vect_list): #make into array so can multiply as array
     toArray = np.array([[vect_list[0].x, vect_list[0].y,vect_list[0].z],[vect_list[1].x, vect_list[1].y,vect_list[1].z],[vect_list[2].x, vect_list[2].y,vect_list[2].z]])
     return toArray
 
-current_RM = np.dot(RMtoArray(parent_RM), Rodrigues(UX, 0))
+#rodrigues takes a (relevant UX, UY, UZ) and q is joint angle, from Inverse Kinematics
+q = 0
+current_RM = np.dot(RMtoArray(parent_RM), Rodrigues(UX, q)) # x, y, z; matrix not transposed
+current_RM = current_RM.transpose() #transpose so appropriate for indexing for euler
 
 print("current RM= ",current_RM)
+print("current RM 0 2= ",current_RM[0, 2])
+
+if (current_RM[0, 2] == 1) | (current_RM[0, 2] == -1): 
+    # special case 
+    yaw = 0
+    #set arbitrarily
+    dlt = np.arctan2(current_RM[0, 1], current_RM[0, 2])
+    if current_RM[0, 2] == -1: 
+        pitch = np.pi/2 
+        roll = yaw + dlt
+    else:
+        pitch = -np.pi/2 
+        roll = -yaw + dlt
+else:
+    pitch = -np.arcsin(current_RM[0, 2])
+    roll = np.arctan2(current_RM[1, 2]/np.cos(pitch), current_RM[2, 2]/np.cos(pitch)) 
+    yaw = np.arctan2(current_RM[0, 1]/np.cos(pitch), current_RM[0, 0]/np.cos(pitch)) 
+    
+Euler_matrix = [roll, pitch, yaw]
+print("Euler Matrix= ",Euler_matrix)
+
+rjoint_4.rotate(angle=roll, 
+        axis=UX)
+        
+# roll - z  -> y
+rleg_3.rotate(angle=roll, 
+        axis=UX)    
+
+#pitch - y  -> x    
+rleg_3.rotate(angle=pitch, 
+        axis=UY)    
+#yaw - x  -> z       
+rleg_3.rotate(angle=yaw, 
+        axis=UZ)   
 
 
 def make_axes(length):
