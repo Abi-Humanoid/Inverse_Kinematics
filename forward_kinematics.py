@@ -28,20 +28,28 @@ pos = vector(50,0,0)
 r_foot = box(pos=vector(posv[0],posv[1]-(joint_rad+(ped_size[1]/2)),posv[2]),
                 size=vector(ped_size[0],ped_size[1],ped_size[2]))
 rjoint_6 = sphere(pos=pos, radius=joint_rad)
+
 rleg_5 = box(pos=rjoint_6.pos+vector(0,joint_rad+length5/2,0),
                 size=vector(link_width,length5+2*joint_rad,link_width))
+
 rjoint_5 = sphere(pos=rleg_5.pos+vector(0,joint_rad+length5/2,0),
                 radius=joint_rad)
+
 rleg_4 = box(pos=rjoint_5.pos+vector(0,joint_rad+length4/2,0),
                 size=vector(link_width,2*joint_rad+length4,link_width))
+
 rjoint_4 = sphere(pos=rleg_4.pos+vector(0,joint_rad+length4/2,0),
                 radius=joint_rad)
+
 rleg_3 = box(pos=rjoint_4.pos+vector(0,joint_rad+length3/2,0),
                 size=vector(link_width,2*joint_rad+length3,link_width))
+
 rjoint_3 = sphere(pos=rleg_3.pos+vector(0,joint_rad+length3/2,0),
                 axis=vector(1,0,0), radius=joint_rad)
+
 rjoint_2 = sphere(pos=rjoint_3.pos+vector(2*joint_rad,0,0),
                 radius=joint_rad)
+
 rjoint_1 = sphere(pos=rjoint_2.pos+vector(0,2*joint_rad,0),
                 radius=joint_rad)
 
@@ -56,8 +64,8 @@ def relative_pos(current, parent): #joint position relative to *parent*
 parent = rjoint_3
 # set rotation matrix of parent (may be identity)
 ex = vector(1,0,0)
-ey = vector(0,0,1)
-ez = vector(0,-1,0)
+ey = vector(0,1,0)
+ez = vector(0,0,1)
 parent_RM = [ex, ey, ez] #x, y, z 
 #print("A[:,0] =",parent_RM[:,0]) # First Column
 b1 = relative_pos(rjoint_4.pos,parent.pos)

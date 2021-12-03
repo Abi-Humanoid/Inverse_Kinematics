@@ -44,8 +44,22 @@ rjoint_2 = sphere(pos=rjoint_3.pos+vector(2*joint_rad,0,0),
 rjoint_1 = sphere(pos=rjoint_2.pos+vector(0,2*joint_rad,0),
                 radius=joint_rad)
 
+print('r_foot',r_foot.pos)
+print('rjoint_6',rjoint_6.pos)
+print('rjoint_5',rjoint_5.pos)
+print('rjoint_4',rjoint_4.pos)
+print('rjoint_3',rjoint_3.pos)
+print('rjoint_2',rjoint_2.pos)
+print('rjoint_1',rjoint_1.pos)
+print('rleg_5',rleg_5.pos)
+print('rleg_4',rleg_4.pos)
+print('rleg_3',rleg_3.pos)
+
+
+
 body = box(pos=rjoint_1.pos+vector(joint_rad+bod_size[0]/2,0,0),
                 size=vector(bod_size[0],bod_size[1],bod_size[2]))
+print("body",body.pos)
 
 ljoint_7 = sphere(pos=vector(posv[0]+4*joint_rad+bod_size[0],posv[1]+all_length,posv[2]),
                 radius=joint_rad)
@@ -67,6 +81,15 @@ ljoint_12 = sphere(pos=vector(posv[0]+6*joint_rad+bod_size[0],posv[1],posv[2]),
                 radius=joint_rad)
 l_foot = box(pos=vector(posv[0]+6*joint_rad+bod_size[0],posv[1]-(joint_rad+(ped_size[1]/2)),posv[2]),
                 size=vector(ped_size[0],ped_size[1],ped_size[2]))
+
+
+print('l_foot',r_foot.pos)
+print("ljoint_7",ljoint_7.pos)
+print("ljoint_8",ljoint_8.pos)
+print("ljoint_9",ljoint_9.pos)
+print("ljoint_10",ljoint_10.pos)
+print("ljoint_11",ljoint_11.pos)
+print("ljoint_12",ljoint_12.pos)
 
 def make_axes(length):
     x_axis = arrow(pos=vector(0,0,0), axis=length*vector(1,0,0), color=color.red)
