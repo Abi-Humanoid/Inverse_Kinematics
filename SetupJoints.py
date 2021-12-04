@@ -12,12 +12,40 @@ class SetupBiped:
         self.q = q
         self.pos=pos
         self.parent = parent
-        self.rm = np.array([[1, 0, 0],[0,1,0],[0,0,1]])
 
+        self.rm = np.array([[1, 0, 0],[0,1,0],[0,0,1]])
+        self.tm_0_i = np.array([[1,0,0,pos.x],[0,1,0,pos.y],[0, 0, 1, pos.z],[0,0,0,1]])
+        
         if self.parent is not None:
             self.parent.child.append(self)
-        
+            self.tm_0_i = np.array([[1,0,0,self.pos.x-self.parent.pos.x],[0,1,0,self.pos.y-self.parent.pos.y],[0, 0, 1, self.pos.z-self.parent.pos.z],[0,0,0,1]])
+        #if self.parent is None:
+            #condition here
 
+    def Rod(self, joint_angle):
+        eye = [[1,0,0],[0,1,0],[0,0,1]] #for rodrigues
+        wedge = np.array([[0, -self.a.z, self.a.y], [self.a.z, 0, -self.a.x], [-self.a.y, self.a.x, 0]])#3x3
+        squared = wedge.dot(wedge)
+        e = np.array(eye + wedge*sin(joint_angle) + squared*(1-cos(joint_angle))) #R = eye(3) + w_wedge * sin(th) + w_wedge^2 * (1-cos(th));
+        print("e = ",e)
+        bottom = np.array([0,0,0])
+        e1 = np.vstack([e, bottom])
+        print("e1 = ",e1)
+        
+        #relative_pos(self): #joint position relative to *parent*
+        b = self.pos - self.parent.pos
+        b = np.array([[b.x], [b.y], [b.z],[1]])
+        print("b = ",b)
+
+        self.tm_i_j = np.hstack([e1,b])
+        print("tm_i_j = ",tm_)
+        #matrix multiplication for 0->y T
+        self.tm_0_j = np.matmul(self.parent.tm_0_i, self.tm_i_j)
+
+        self.pos = vector(self.tm_0_j[0,3], self.tm_0_j[1,3], self.tm_0_j[2,3])        
+        self.rm = self.tm_0_j[0:2,0:2]
+        self.draw()
+        
     def  draw(self):
         joint_rad = 4
         sphere(pos=self.pos, radius=joint_rad)

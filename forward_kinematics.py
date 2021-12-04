@@ -64,8 +64,8 @@ def relative_pos(current, parent): #joint position relative to *parent*
 parent = rjoint_3
 # set rotation matrix of parent (may be identity)
 ex = vector(1,0,0)
-ey = vector(0,1,0)
-ez = vector(0,0,1)
+ey = vector(0,0,1)
+ez = vector(0,-1,0)
 parent_RM = [ex, ey, ez] #x, y, z 
 #print("A[:,0] =",parent_RM[:,0]) # First Column
 b1 = relative_pos(rjoint_4.pos,parent.pos)
