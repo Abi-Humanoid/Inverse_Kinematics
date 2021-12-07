@@ -1,5 +1,6 @@
 from vpython import *
 import numpy as np
+# Uses homogenous transformation matrices
 
 #SetupBiped sets parameters of each joint. Child and sister empty as sister only relevant for top hip joint, and child not relevant for foot.
 # Number is joint number, a is joint axis, q is joint velocity
@@ -38,9 +39,10 @@ class SetupBiped:
         print("b = ",b)
 
         self.tm_i_j = np.hstack([e1,b])
-        print("tm_i_j = ",tm_)
+        print("tm_i_j = ",self.tm_i_j)
         #matrix multiplication for 0->y T
         self.tm_0_j = np.matmul(self.parent.tm_0_i, self.tm_i_j)
+        print("tm_0_j = ",self.tm_0_j)
 
         self.pos = vector(self.tm_0_j[0,3], self.tm_0_j[1,3], self.tm_0_j[2,3])        
         self.rm = self.tm_0_j[0:2,0:2]
