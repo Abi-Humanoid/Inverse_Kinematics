@@ -1,31 +1,39 @@
+#Testing SetupJoints script
+
 from vpython import *
 from time import *
 import numpy as np
-from SetupJoints import SetupBiped
+from SetupJoints2 import SetupBiped
 
 # setting a, joint axis vector (roll, pitch, yaw)
 UX = vector(1,0,0)
 UY = vector(0,1,0)
 UZ = vector(0,0,1)
 
+ex = vector(1,0,0) #vector(1,0,0)
+ey = vector(0,0,1) #vector(0,0,1)
+ez = vector(0,-1,0) #vector(0,-1,0)
+eye_rm = [ex, ey, ez] #x, y, z
 
 #joint 1 is body, increasing joint no = down right leg, j7 is foot
 #Axis as defined in VPython setup
-j1 = SetupBiped(1, UY, 0, vector(67, 86, 0))
-j2 = SetupBiped(2, UY, 0, vector(58, 86, 0), j1)
-j3 = SetupBiped(3, UZ, 0, vector(58, 78, 0), j2)
-j4 = SetupBiped(4, UX, 0, vector(50, 78, 0), j3)
-j5 = SetupBiped(5, UX, 0, vector(50, 44, 0), j4)
-j6 = SetupBiped(6, UX, 0, vector(50, 19, 0), j5)
-j7 = SetupBiped(7, UZ, 0, vector(50, 0, 0), j6)
+#Need to make b a parameter from initial setup
+#change square brackets to ()
+j1 = SetupBiped(1, UY, 0, vector(67, 86, 0), eye_rm )
+j2 = SetupBiped(2, UY, 0, vector(58, 86, 0), eye_rm, vector(-9,0,0),  j1)
+j3 = SetupBiped(3, UZ, 0, vector(58, 78, 0),  eye_rm, vector(0, 78-86,0),j2)
+j4 = SetupBiped(4, UX, 0, vector(50, 78, 0), eye_rm,vector(50-58,0,0), j3)
+j5 = SetupBiped(5, UX, 0, vector(50, 44, 0),  eye_rm,vector(0,44-78,0), j4)
+j6 = SetupBiped(6, UX, 0, vector(50, 19, 0),  eye_rm, vector(0, 19-44,0),j5)
+j7 = SetupBiped(7, UZ, 0, vector(50, 0, 0),  eye_rm, vector(0, -19,0),j6)
 
 #Left leg going down, j13 is foot
-j8 = SetupBiped(8, UY, 0, vector(76, 86, 0), j1)
-j9 = SetupBiped(9, UZ, 0, vector(76, 78, 0), j8)
-j10 = SetupBiped(10, UX, 0, vector(84, 78, 0), j9)
-j11 = SetupBiped(11, UX, 0, vector(84, 44, 0), j10)
-j12 = SetupBiped(12, UX, 0, vector(84, 19, 0), j11)
-j13 = SetupBiped(13, UZ, 0, vector(84, 0, 0), j12)
+j8 = SetupBiped(8, UY, 0, vector(76, 86, 0), eye_rm, vector(76-67,0,0),j1)
+j9 = SetupBiped(9, UZ, 0, vector(76, 78, 0), eye_rm, vector(0,78-86,0),j8)
+j10 = SetupBiped(10, UX, 0, vector(84, 78, 0), eye_rm, vector(84-76,0,0), j9)
+j11 = SetupBiped(11, UX, 0, vector(84, 44, 0), eye_rm, vector(0,44-78,0), j10)
+j12 = SetupBiped(12, UX, 0, vector(84, 19, 0), eye_rm, vector(0,19-44,0),j11)
+j13 = SetupBiped(13, UZ, 0, vector(84, 0, 0), eye_rm, vector(0,-19,0), j12)
 
 #** two children of body: left hip, right hip. Instead of one child and one sister for joint 2**
 j1.child = [j2, j8] 
@@ -62,20 +70,35 @@ scene.width = scene.height = 600
 scene.range = 180
 
 # set rotation matrix of parent (may be identity)
+#rotates x axis
 ex = vector(1,0,0)
-ey = vector(0,0,1)
-ez = vector(0,-1,0)
-
+ey = vector(0,0.5,-0.86)
+ez = vector(0,0.86,0.5)
 parent_RM = [ex, ey, ez] #x, y, z 
 
-j4.Rod(0)
+j4.rm = parent_RM
+print("before: rjoint_5 pos = ",j5.pos)
+print("before: rjoint_5 RM = ",j5.rm) 
+j5.ForwardKinematics(0)
 
-print("rjoint_4 pos = ",j4.pos)
-print("rjoint_4 RM = ",j4.rm)  
+print("after: rjoint_5 pos = ",j5.pos)
+print("after: rjoint_5 RM = ",j5.rm)  
 
-#uLINK(mom).R * uLINK(j).b
+print("before: rjoint_6 pos = ",j6.pos)
+print("before rjoint_6 RM = ",j6.rm) 
 
-######## finding attitude of current joint #### #uLINK(j).R = uLINK(mom).R (3x3) * Rodrigues(uLINK(j).a, uLINK(j).q) (3x3); a is joint axis vector relative to parent, q is joint angle
+j6.ForwardKinematics(0)
+print("after: rjoint_6 pos = ",j6.pos)
+print("after rjoint_6 RM = ",j6.rm) 
+
+print("before: rjoint_7 pos = ",j7.pos)
+print("before rjoint_7 RM = ",j7.rm) 
+j7.ForwardKinematics(0)
+print("after: rjoint_7 pos = ",j7.pos)
+print("after rjoint_7 RM = ",j7.rm) 
+
+
+
 
 
 def make_axes(length):
@@ -92,6 +115,8 @@ def make_axes(length):
     neg_zaxis.axis *= -1
 
     xlabel = label(text="x", color=color.red, pos=x_axis.pos+x_axis.axis)
+    ylabel = label(text="y", color=color.green, pos=y_axis.pos+y_axis.axis)
+    zlabel = label(text="z", color=color.blue, pos=z_axis.pos+z_axis.axis)
     return
 
 while True:
