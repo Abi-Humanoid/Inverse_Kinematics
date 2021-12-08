@@ -19,10 +19,11 @@ eye_rm = [ex, ey, ez] #x, y, z
 #Axis as defined in VPython setup
 #Need to make b a parameter from initial setup
 #change square brackets to ()
+
 j1 = SetupBiped(1, UY, 0, vector(67, 86, 0), eye_rm )
 j2 = SetupBiped(2, UY, 0, vector(58, 86, 0), eye_rm, vector(-9,0,0),  j1)
 j3 = SetupBiped(3, UZ, 0, vector(58, 78, 0),  eye_rm, vector(0, 78-86,0),j2)
-j4 = SetupBiped(4, UX, 0, vector(50, 78, 0), eye_rm,vector(50-58,0,0), j3)
+j4 = SetupBiped(4, UX, 0, vector(50, 78, 0), eye_rm, vector(50-58,0,0), j3)
 j5 = SetupBiped(5, UX, 0, vector(50, 44, 0),  eye_rm,vector(0,44-78,0), j4)
 j6 = SetupBiped(6, UX, 0, vector(50, 19, 0),  eye_rm, vector(0, 19-44,0),j5)
 j7 = SetupBiped(7, UZ, 0, vector(50, 0, 0),  eye_rm, vector(0, -19,0),j6)
@@ -34,7 +35,24 @@ j10 = SetupBiped(10, UX, 0, vector(84, 78, 0), eye_rm, vector(84-76,0,0), j9)
 j11 = SetupBiped(11, UX, 0, vector(84, 44, 0), eye_rm, vector(0,44-78,0), j10)
 j12 = SetupBiped(12, UX, 0, vector(84, 19, 0), eye_rm, vector(0,19-44,0),j11)
 j13 = SetupBiped(13, UZ, 0, vector(84, 0, 0), eye_rm, vector(0,-19,0), j12)
+"""""
+j1 = SetupBiped(1, UY, 0, vector(67, 86, 0) )
+j2 = SetupBiped(2, UY, 0, vector(58, 86, 0), vector(-9,0,0),  j1)
+j3 = SetupBiped(3, UZ, 0, vector(58, 78, 0),   vector(0, 78-86,0),j2)
+j4 = SetupBiped(4, UX, 0, vector(50, 78, 0), vector(50-58,0,0), j3)
+j5 = SetupBiped(5, UX, 0, vector(50, 44, 0),  vector(0,44-78,0), j4)
+j6 = SetupBiped(6, UX, 0, vector(50, 19, 0),  vector(0, 19-44,0),j5)
+j7 = SetupBiped(7, UZ, 0, vector(50, 0, 0), vector(0, -19,0),j6)
 
+#Left leg going down, j13 is foot
+j8 = SetupBiped(8, UY, 0, vector(76, 86, 0),  vector(76-67,0,0),j1)
+j9 = SetupBiped(9, UZ, 0, vector(76, 78, 0), vector(0,78-86,0),j8)
+j10 = SetupBiped(10, UX, 0, vector(84, 78, 0),vector(84-76,0,0), j9)
+j11 = SetupBiped(11, UX, 0, vector(84, 44, 0), vector(0,44-78,0), j10)
+j12 = SetupBiped(12, UX, 0, vector(84, 19, 0), vector(0,19-44,0),j11)
+j13 = SetupBiped(13, UZ, 0, vector(84, 0, 0), vector(0,-19,0), j12)
+
+"""""
 #** two children of body: left hip, right hip. Instead of one child and one sister for joint 2**
 j1.child = [j2, j8] 
 
@@ -70,13 +88,16 @@ scene.width = scene.height = 600
 scene.range = 180
 
 # set rotation matrix of parent (may be identity)
-#rotates x axis
+#rotates x axis for 60 degrees
 ex = vector(1,0,0)
 ey = vector(0,0.5,-0.86)
 ez = vector(0,0.86,0.5)
 parent_RM = [ex, ey, ez] #x, y, z 
 
+
 j4.rm = parent_RM
+
+
 print("before: rjoint_5 pos = ",j5.pos)
 print("before: rjoint_5 RM = ",j5.rm) 
 j5.ForwardKinematics(0)
@@ -97,9 +118,10 @@ j7.ForwardKinematics(0)
 print("after: rjoint_7 pos = ",j7.pos)
 print("after rjoint_7 RM = ",j7.rm) 
 
+"""
+j5.Rod(0)
 
-
-
+"""
 
 def make_axes(length):
     x_axis = arrow(pos=vector(0,0,0), axis=length*vector(1,0,0), color=color.red)
