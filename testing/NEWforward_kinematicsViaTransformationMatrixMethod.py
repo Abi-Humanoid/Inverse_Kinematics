@@ -1,4 +1,4 @@
-#Testing SetupJoints script
+#Testing SetupJoints script using transformations matrices
 
 from vpython import *
 from time import *
