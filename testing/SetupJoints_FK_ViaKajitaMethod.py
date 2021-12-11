@@ -55,7 +55,7 @@ class SetupBiped:
         if self.parent is not None:
             leg_drawing = curve([self.pos, self.parent.pos], radius = 1.5)
 
-    
+    """
     def CalcVWerr(self, target):
         #calculate error in position
         perr = target.pos - self.pos
@@ -126,7 +126,7 @@ class SetupBiped:
         #calc error again until satisfies 
         
 
-
+       """
 # setting a, joint axis vector (roll, pitch, yaw)
 UX = vector(1,0,0)
 UY = vector(0,1,0)
