@@ -118,9 +118,9 @@ j7.ForwardKinematics(0)
 print("after: rjoint_7 pos = ",j7.pos)
 print("after rjoint_7 RM = ",j7.rm) 
 
-
-j5.Rod(0)
 """
+j5.Rod(0)
+
 
 
 def make_axes(length):
