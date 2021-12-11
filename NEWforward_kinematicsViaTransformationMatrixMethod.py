@@ -3,7 +3,7 @@
 from vpython import *
 from time import *
 import numpy as np
-from SetupJoints2 import SetupBiped
+from SetupJointsViaTransformationMatrixMethod import SetupBiped
 
 # setting a, joint axis vector (roll, pitch, yaw)
 UX = vector(1,0,0)
@@ -19,7 +19,7 @@ eye_rm = [ex, ey, ez] #x, y, z
 #Axis as defined in VPython setup
 #Need to make b a parameter from initial setup
 #change square brackets to ()
-
+"""""
 j1 = SetupBiped(1, UY, 0, vector(67, 86, 0), eye_rm )
 j2 = SetupBiped(2, UY, 0, vector(58, 86, 0), eye_rm, vector(-9,0,0),  j1)
 j3 = SetupBiped(3, UZ, 0, vector(58, 78, 0),  eye_rm, vector(0, 78-86,0),j2)
@@ -52,7 +52,7 @@ j11 = SetupBiped(11, UX, 0, vector(84, 44, 0), vector(0,44-78,0), j10)
 j12 = SetupBiped(12, UX, 0, vector(84, 19, 0), vector(0,19-44,0),j11)
 j13 = SetupBiped(13, UZ, 0, vector(84, 0, 0), vector(0,-19,0), j12)
 
-"""""
+
 #** two children of body: left hip, right hip. Instead of one child and one sister for joint 2**
 j1.child = [j2, j8] 
 
