@@ -34,7 +34,7 @@ class SetupBiped:
         wedge = np.array([[0, -self.a.z, self.a.y], [self.a.z, 0, -self.a.x], [-self.a.y, self.a.x, 0]])#3x3
         squared = wedge.dot(wedge)
         e = np.array(eye + wedge*sin(joint_angle) + squared*(1-cos(joint_angle))) #R = eye(3) + w_wedge * sin(th) + w_wedge^2 * (1-cos(th));
-        print("e = ",e)
+        
         
         #convert parent's rotation matrix (vector) to array so that dot product works
         rm_to_array = np.array([[self.parent.rm[0].x, self.parent.rm[0].y, self.parent.rm[0].z],[self.parent.rm[1].x, self.parent.rm[1].y,self.parent.rm[1].z],[ self.parent.rm[2].x, self.parent.rm[2].y, self.parent.rm[2].z]])

@@ -3,6 +3,7 @@
 from vpython import *
 from time import *
 import numpy as np
+import math
 
 from SetupJoints_FK_ViaKajitaMethod import SetupBiped
 
@@ -54,20 +55,43 @@ j10.child = j11
 j12.child = j13
 
 
-
 scene.userzoom = True
 scene.width = scene.height = 600
 scene.range = 180
 
+
 # set rotation matrix of parent (may be identity)
 #rotates x axis for 60 degrees
-ex = vector(1,0,0)
-ey = vector(0,0,1)
-ez = vector(0,-1, 0)
-parent_RM = [ex, ey, ez] #x, y, z 
 
-j4.rm = parent_RM
+joint_no = 4
+print("Rotating right leg")
+while joint_no < 7:
+    joint_array = [j4, j5, j6]
+    for link in range(1,4):
+        joint = joint_array[link-1]
+        if joint.number == joint_no:
+            joint_to_rotate = joint
+            child_joint_to_update = joint.child
+            
+    
+    print("Change rotation of joint ", joint_no)
+    testing = input("Y/N: ")
+    if testing == 'N':
+        child_joint_to_update.ForwardKinematics(0)
+        joint_no = joint_no +1
+    else:
+        theta = int(input("Set rotation about its axis in degrees: "))
+        
+        ex = vector(1,0,0)
+        ey = vector(0,np.cos(np.radians(theta)),-np.sin(np.radians(theta)))
+        ez = vector(0,np.sin(np.radians(theta)), np.cos(np.radians(theta)))
+        parent_RM = [ex, ey, ez] #x, y, z 
 
+        joint_to_rotate.rm = parent_RM
+        child_joint_to_update.ForwardKinematics(0)
+        joint_no = joint_no +1
+
+"""
 print("before: rjoint_5 pos = ",j5.pos)
 print("before: rjoint_5 RM = ",j5.rm) 
 j5.ForwardKinematics(0)
@@ -77,9 +101,10 @@ print("after: rjoint_5 RM = ",j5.rm)
 print("before: rjoint_6 pos = ",j6.pos)
 print("before rjoint_6 RM = ",j6.rm) 
 
+theta = -60
 ex = vector(1,0,0)
-ey = vector(0,0.95,0.30)
-ez = vector(0,-0.30,0.95)
+ey = vector(0,np.cos(np.radians(theta)),-np.sin(np.radians(theta)))
+ez = vector(0,np.sin(np.radians(theta)), np.cos(np.radians(theta)))
 j5_RM = [ex, ey, ez] #x, y, z 
 j5.rm = j5_RM
 
@@ -92,11 +117,8 @@ print("before rjoint_7 RM = ",j7.rm)
 j7.ForwardKinematics(0)
 print("after: rjoint_7 pos = ",j7.pos)
 print("after rjoint_7 RM = ",j7.rm) 
+"""
 
-
-"""""
-j4.InverseKinematics(j5)
-"""""
 def make_axes(length):
     x_axis = arrow(pos=vector(0,0,0), axis=length*vector(1,0,0), color=color.red)
     neg_xaxis = x_axis.clone()
