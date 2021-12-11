@@ -54,7 +54,7 @@ class SetupBiped:
         if self.parent is not None:
             leg_drawing = curve([self.pos, self.parent.pos], radius = 1.5)
 
-    
+    """""
     def CalcVWerr(self, target):
         perr = target.pos - self.pos
         Rerr = self.rm' * target.rm
@@ -84,7 +84,7 @@ class SetupBiped:
         #update ForwardKinematics again for all joints
 
         #calc error again until satisfies 
-
+        """
 
 
 # setting a, joint axis vector (roll, pitch, yaw)

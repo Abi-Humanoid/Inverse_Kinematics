@@ -3,7 +3,7 @@
 from vpython import *
 from time import *
 import numpy as np
-from SetupJoints2 import SetupBiped
+from SetupJointsViaKajitaMethod import SetupBiped
 
 # setting a, joint axis vector (roll, pitch, yaw)
 UX = vector(1,0,0)
@@ -11,8 +11,8 @@ UY = vector(0,1,0)
 UZ = vector(0,0,1)
 
 ex = vector(1,0,0) #vector(1,0,0)
-ey = vector(0,0,1) #vector(0,0,1)
-ez = vector(0,-1,0) #vector(0,-1,0)
+ey = vector(0,1,0) #vector(0,0,1)
+ez = vector(0,0,1) #vector(0,-1,0)
 eye_rm = [ex, ey, ez] #x, y, z
 
 #joint 1 is body, increasing joint no = down right leg, j7 is foot
@@ -51,7 +51,6 @@ j10 = SetupBiped(10, UX, 0, vector(84, 78, 0),vector(84-76,0,0), j9)
 j11 = SetupBiped(11, UX, 0, vector(84, 44, 0), vector(0,44-78,0), j10)
 j12 = SetupBiped(12, UX, 0, vector(84, 19, 0), vector(0,19-44,0),j11)
 j13 = SetupBiped(13, UZ, 0, vector(84, 0, 0), vector(0,-19,0), j12)
-
 """""
 #** two children of body: left hip, right hip. Instead of one child and one sister for joint 2**
 j1.child = [j2, j8] 
@@ -90,23 +89,26 @@ scene.range = 180
 # set rotation matrix of parent (may be identity)
 #rotates x axis for 60 degrees
 ex = vector(1,0,0)
-ey = vector(0,0.5,-0.86)
-ez = vector(0,0.86,0.5)
+ey = vector(0,0,1)
+ez = vector(0,-1, 0)
 parent_RM = [ex, ey, ez] #x, y, z 
-
 
 j4.rm = parent_RM
 
-"""
 print("before: rjoint_5 pos = ",j5.pos)
 print("before: rjoint_5 RM = ",j5.rm) 
 j5.ForwardKinematics(0)
 
 print("after: rjoint_5 pos = ",j5.pos)
 print("after: rjoint_5 RM = ",j5.rm)  
-
 print("before: rjoint_6 pos = ",j6.pos)
 print("before rjoint_6 RM = ",j6.rm) 
+
+ex = vector(1,0,0)
+ey = vector(0,0.95,0.30)
+ez = vector(0,-0.30,0.95)
+j5_RM = [ex, ey, ez] #x, y, z 
+j5.rm = j5_RM
 
 j6.ForwardKinematics(0)
 print("after: rjoint_6 pos = ",j6.pos)
@@ -118,10 +120,10 @@ j7.ForwardKinematics(0)
 print("after: rjoint_7 pos = ",j7.pos)
 print("after rjoint_7 RM = ",j7.rm) 
 
-
+""""
 j5.Rod(0)
-"""
 
+"""
 
 def make_axes(length):
     x_axis = arrow(pos=vector(0,0,0), axis=length*vector(1,0,0), color=color.red)

@@ -1,4 +1,4 @@
-#Testing SetupJoints script
+#Testing SetupJoints script using transformations matrices
 
 from vpython import *
 from time import *
@@ -51,6 +51,7 @@ j10 = SetupBiped(10, UX, 0, vector(84, 78, 0),vector(84-76,0,0), j9)
 j11 = SetupBiped(11, UX, 0, vector(84, 44, 0), vector(0,44-78,0), j10)
 j12 = SetupBiped(12, UX, 0, vector(84, 19, 0), vector(0,19-44,0),j11)
 j13 = SetupBiped(13, UZ, 0, vector(84, 0, 0), vector(0,-19,0), j12)
+
 
 #** two children of body: left hip, right hip. Instead of one child and one sister for joint 2**
 j1.child = [j2, j8] 
@@ -117,9 +118,9 @@ j7.ForwardKinematics(0)
 print("after: rjoint_7 pos = ",j7.pos)
 print("after rjoint_7 RM = ",j7.rm) 
 
-"""
-j5.Rod(0)
 
+j5.Rod(0)
+"""
 
 
 def make_axes(length):
