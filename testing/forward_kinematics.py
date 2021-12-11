@@ -1,3 +1,5 @@
+# Testing initial forward kinematics commands on only the knee joint
+
 from vpython import *
 from time import *
 import numpy as np
@@ -138,6 +140,17 @@ else:
     roll = np.arctan2(current_RM[1, 2]/np.cos(pitch), current_RM[2, 2]/np.cos(pitch)) 
     yaw = np.arctan2(current_RM[0, 1]/np.cos(pitch), current_RM[0, 0]/np.cos(pitch)) 
     
+test1 = [vector(1,2,3), vector(4,5,6), vector(7,8,9)]
+b1 = vector(-9,0,0)
+test1 = np.array([[test1[0].x, test1[0].y, test1[0].z],[test1[1].x, test1[1].y,test1[1].z],[test1[2].x,test1[2].y, test1[2].z]])
+test1 = np.transpose(test1)   
+row_1 = vector(test1[0,0], test1[0,1], test1[0,2])
+row_2 = vector(test1[1,0], test1[1,1], test1[1,2])
+row_3 = vector(test1[2,0], test1[2,1], test1[2,2])
+test1= [row_1,row_2,row_3]
+testing= vector(dot(test1[0], b1), dot(test1[1], b1), dot(test1[2], b1))
+print("testing",testing)
+
 Euler_matrix = [roll, pitch, yaw]
 print("Euler Matrix= ",Euler_matrix)
 

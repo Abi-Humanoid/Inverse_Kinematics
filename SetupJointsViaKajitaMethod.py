@@ -1,7 +1,6 @@
 from vpython import *
 import numpy as np
-# Uses homogenous transformation matrices
-
+# Uses Kajita matlab script as basis
 #SetupBiped sets parameters of each joint. Child and sister empty as sister only relevant for top hip joint, and child not relevant for foot.
 # Number is joint number, a is joint axis, q is joint velocity
 class SetupBiped:
@@ -22,9 +21,10 @@ class SetupBiped:
         #if self.parent is None:
             #condition here
 
-
+    
     def ForwardKinematics(self, joint_angle):
         # cant do dot product on 3x3 vector, so seperate operations, make into vector parent_RM_mult_b that is 1x3
+        # equivalent to rm * b
         parent_rm_mul_b= vector(dot(self.parent.rm[0], self.b), dot(self.parent.rm[1], self.b), dot(self.parent.rm[2], self.b))
         self.pos = parent_rm_mul_b + self.parent.pos
 
@@ -44,13 +44,48 @@ class SetupBiped:
         row_2 = vector(self.rm[1,0], self.rm[1,1], self.rm[1,2])
         row_3 = vector(self.rm[2,0], self.rm[2,1], self.rm[2,2])
         self.rm = [row_1,row_2,row_3]
-        self.draw()
         
-    def  draw(self):
+        self.draw()
+
+    def draw(self):
         joint_rad = 4
-        sphere(pos=self.pos, radius=joint_rad)
+        #toggle visibility??
+        joint_drawing = sphere(pos=self.pos, radius=joint_rad)
         if self.parent is not None:
-            curve([self.pos, self.parent.pos], radius = 1.5)
+            leg_drawing = curve([self.pos, self.parent.pos], radius = 1.5)
+
+    """""
+    def CalcVWerr(self, target):
+        perr = target.pos - self.pos
+        Rerr = self.rm' * target.rm
+
+
+    def InverseKinematics(self):
+        route = [2]
+        while self.number > route.len():
+            route.append(route.len() + 1)
+
+        joint_array = [j1, j2, j3, j4, j5]
+        for joint in joint_array:
+            joint.ForwardKinematics(0)
+        
+        
+        #calculate errors
+
+
+        #for loop to break at error
+
+        #calculate Jacobian
+
+        #calc adjustments
+
+        #addition of q + dq
+
+        #update ForwardKinematics again for all joints
+
+        #calc error again until satisfies 
+        """
+
 
 # setting a, joint axis vector (roll, pitch, yaw)
 UX = vector(1,0,0)
@@ -96,6 +131,7 @@ j10 = SetupBiped(10, UX, 0, vector(84, 78, 0), eye_rm, vector(84-76,0,0), j9)
 j11 = SetupBiped(11, UX, 0, vector(84, 44, 0), eye_rm, vector(0,44-78,0), j10)
 j12 = SetupBiped(12, UX, 0, vector(84, 19, 0), eye_rm, vector(0,19-44,0),j11)
 j13 = SetupBiped(13, UZ, 0, vector(84, 0, 0), eye_rm, vector(0,-19,0), j12)
+
 #** two children of body: left hip, right hip. Instead of one child and one sister for joint 2**
 j1.child = [j2, j8] 
 
