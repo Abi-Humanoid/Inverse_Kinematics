@@ -55,8 +55,6 @@ print('rleg_5',rleg_5.pos)
 print('rleg_4',rleg_4.pos)
 print('rleg_3',rleg_3.pos)
 
-
-
 body = box(pos=rjoint_1.pos+vector(joint_rad+bod_size[0]/2,0,0),
                 size=vector(bod_size[0],bod_size[1],bod_size[2]))
 print("body",body.pos)
