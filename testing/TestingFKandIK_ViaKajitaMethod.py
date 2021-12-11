@@ -3,7 +3,9 @@
 from vpython import *
 from time import *
 import numpy as np
-from SetupJointsViaKajitaMethod import SetupBiped
+
+#CHANGE FROM TO CORRECT FILE FOR FK // IK
+from SetupJoints_FK_ViaKajitaMethod import SetupBiped
 
 # setting a, joint axis vector (roll, pitch, yaw)
 UX = vector(1,0,0)
@@ -120,13 +122,10 @@ j7.ForwardKinematics(0)
 print("after: rjoint_7 pos = ",j7.pos)
 print("after rjoint_7 RM = ",j7.rm) 
 
-""""
-j5.Rod(0)
 
-"""
-
+"""""
 j4.InverseKinematics(j5)
-
+"""""
 def make_axes(length):
     x_axis = arrow(pos=vector(0,0,0), axis=length*vector(1,0,0), color=color.red)
     neg_xaxis = x_axis.clone()
