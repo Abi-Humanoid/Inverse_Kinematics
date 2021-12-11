@@ -125,6 +125,8 @@ j5.Rod(0)
 
 """
 
+j4.InverseKinematics(j5)
+
 def make_axes(length):
     x_axis = arrow(pos=vector(0,0,0), axis=length*vector(1,0,0), color=color.red)
     neg_xaxis = x_axis.clone()

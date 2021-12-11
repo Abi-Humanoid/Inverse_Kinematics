@@ -1,3 +1,4 @@
+
 from vpython import *
 import numpy as np
 # Uses Kajita matlab script as basis
@@ -54,28 +55,67 @@ class SetupBiped:
         if self.parent is not None:
             leg_drawing = curve([self.pos, self.parent.pos], radius = 1.5)
 
-    """""
+    
     def CalcVWerr(self, target):
+        #calculate error in position
         perr = target.pos - self.pos
-        Rerr = self.rm' * target.rm
+        #convert to matrices
+        self_rm_array = np.array([[self.rm[0].x, self.rm[0].y, self.rm[0].z],[self.rm[1].x, self.rm[1].y,self.rm[1].z],[self.rm[2].x, self.rm[2].y, self.rm[2].z]])
+        target_rm_array = np.array([[target.rm[0].x, target.rm[0].y, target.rm[0].z],[target.rm[1].x, target.rm[1].y,target.rm[1].z],[target.rm[2].x, target.rm[2].y, target.rm[2].z]])
+        Rerr = self_rm_array.transpose * target_rm_array
+
+        #rot2omega -Transform rotation matrix into the corresponding angular velocity vector T.Sugihara, Humanoids 2009
+        el = np.array([[Rerr[2,1]-Rerr[1,2]], [Rerr[0,2] - Rerr[2,0]], [Rerr[1,0] - Rerr[0,1]]])
+        norm_el = norm(el)
+        if norm_el > 2^(-52):
+            w = atan2(norm_el, (np.trace(Rerr)-1)/norm_el * el)
+        elif Rerr[0,0]> 0 and Rerr[1,1] >0 and Rerr[2,2] > 0:
+            w = np.array[0,0,0]
+        else:
+            w = pi/2 * np.array([[Rerr[0,0] +1], [Rerr[1,1] +1], [Rerr[2,2]+1]])
+
+        #use angular velcoity vector to calculate error in ?angle
+        werr = self_rm_array * w
+        err = np.array([[perr],[werr]])
+        #return both errors
+        return err
+
+    def CalcJacobian(self):
+        J = np.zeros(6,6)
+        joint_array = [j1, j2, j3, j4, j5, j6, j7]
+        
+        for n in range(2,7):
+            joint = joint_array(n)
+            #a =joint.rm * joint.a
+            a = vector(dot(joint.rm[0], joint.a), dot(joint.rm[1], joint.a), dot(joint.rm[2], joint.a))
+            #need array to append into Jacobian
+            a_to_array = np.array([a.x, a.y, a.z])
+            cross_product = cross(a, j7.pos - joint.pos)
+            cross_product_array = np.array([cross_product.x, cross_product.y, cross_product.z])
+            J[:,n-1] = [cross_product_array, a_to_array]
 
 
-    def InverseKinematics(self):
-        route = [2]
-        while self.number > route.len():
-            route.append(route.len() + 1)
+    def InverseKinematics(self, target):
+        #finds links from self through to foot
+        #while self.number > route.len():
+        #    route.append(route.len() + 1)
 
-        joint_array = [j1, j2, j3, j4, j5]
+        #update all joints 
+        #what to do with joint 1
+        joint_array = [j2, j3, j4, j5, j6, j7]
         for joint in joint_array:
             joint.ForwardKinematics(0)
         
-        
         #calculate errors
-
+        err = self.CalcVWerr(target)
 
         #for loop to break at error
+        for n in range(1,10): #10 iterations
+            if norm(err) < 10^(-6):
+                break
 
-        #calculate Jacobian
+            #calculate Jacobian
+            self.CalcJacobian()
 
         #calc adjustments
 
@@ -84,7 +124,7 @@ class SetupBiped:
         #update ForwardKinematics again for all joints
 
         #calc error again until satisfies 
-        """
+        
 
 
 # setting a, joint axis vector (roll, pitch, yaw)
