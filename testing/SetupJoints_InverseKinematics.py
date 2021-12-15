@@ -103,24 +103,35 @@ class SetupBiped:
     def CalcJacobian(self):
         #jacobian is 6x6
         J = np.zeros((6,6))
-        joint_array = np.array([j1, j2, j3, j4, j5, j6, j7])
+        joint_array = np.array([self, self.child, self.child.child, self.child.child.child, self.child.child.child.child, self.child.child.child.child.child])
         
-        # dont need to do joint 1, so range excludes [0], so 1->6
-        for n in range(1,6):
+        # dont need to do joint 1, so range is 6 joints, for loop doesn't run for n = 7
+        for n in range(6):
             #iterate through each in route from body to target link, which is usually the foot
             joint = joint_array[n]
+            print('joint',joint.number)
+            print('joint r,',joint.rm)
+            print('joints a,',joint.a)
             # a = joint.rm * joint.a (joint axis vector in world frame)
             a = vector(dot(joint.rm[0], joint.a), dot(joint.rm[1], joint.a), dot(joint.rm[2], joint.a))
+            print('a',a)
             #need array to append into Jacobian
             a_to_array = np.array([a.x, a.y, a.z])
-            print('a',a_to_array)
+            #print('a',a_to_array)
             cross_product = cross(a, j7.pos - joint.pos)
+            print('minus ', j7.pos - joint.pos)
+            print('cross_product',cross_product)
+            
             cross_product_array = np.array([cross_product.x, cross_product.y, cross_product.z])
-            print('cross',cross_product_array)
+            print('cross into array',cross_product_array)
             #all rows in column n
-            print('J', np.matrix([cross_product_array, a_to_array]))
-            J[:,n-1] = np.matrix([cross_product_array, a_to_array]) #right notation for matrix, or use np.array?
 
+            column = np.append([cross_product_array], [a_to_array])
+            print('column', column)
+            J[:,n] = np.transpose(column) #right notation for matrix, or use np.array?
+        
+        J = np.matrix(J)
+        print('J', J)
         return J
 
     def InverseKinematics(self, target):
@@ -130,7 +141,8 @@ class SetupBiped:
 
         #update all joints 
         # what to do with joint 1????!!!! Still need to update position and rotation of base j1
-        joint_array = [j2, j3, j4, j5, j6, j7]
+        joint_array = np.array([self, self.child, self.child.child, self.child.child.child, self.child.child.child.child, self.child.child.child.child.child])
+        
         for joint in joint_array:
             joint.ForwardKinematics(0)
         
@@ -141,15 +153,16 @@ class SetupBiped:
         for n in range(1,10): #10 iterations for numerical answer
             if np.linalg.norm(err) < 10^(-6):
                 break
-            
+
             #calculate Jacobian
             J = self.CalcJacobian()
 
             #calculate adjustments - delta q - of joint angles based on errors in position and attitude
-            lambdaa = 0.9
+            set_lambda = 0.9
             # eq 2.77, inverse of eq 2.75. J-1 * [vectors of end effector speed]
+            print('J inv',np.linalg.inv(J))
             dq1 = np.divide(np.linalg.inv(J), err)
-            dq = np.multiply(lambdaa, dq1)
+            dq = np.multiply(set_lambda, dq1)
 
             #update joint velocity of each joint through addition of q + dq
             for joint in joint_array: #length of base to foot
@@ -160,7 +173,6 @@ class SetupBiped:
             #update ForwardKinematics again for all joints
             for joint in joint_array:
                 joint.ForwardKinematics(0)
-
 
             #calc error again until satisfies 
             err = self.CalcVWerr(target)
