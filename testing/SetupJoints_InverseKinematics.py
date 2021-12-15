@@ -33,7 +33,7 @@ class SetupBiped:
         wedge = np.array([[0, -self.a.z, self.a.y], [self.a.z, 0, -self.a.x], [-self.a.y, self.a.x, 0]])#3x3
         squared = wedge.dot(wedge)
         e = np.array(eye + wedge*sin(joint_angle) + squared*(1-cos(joint_angle))) #R = eye(3) + w_wedge * sin(th) + w_wedge^2 * (1-cos(th));
-        print("e = ",e)
+        #print("e = ",e)
         
         #convert parent's rotation matrix (vector) to array so that dot product works
         rm_to_array = np.array([[self.parent.rm[0].x, self.parent.rm[0].y, self.parent.rm[0].z],[self.parent.rm[1].x, self.parent.rm[1].y,self.parent.rm[1].z],[ self.parent.rm[2].x, self.parent.rm[2].y, self.parent.rm[2].z]])
@@ -63,18 +63,28 @@ class SetupBiped:
         self_rm_array = np.array([[self.rm[0].x, self.rm[0].y, self.rm[0].z],[self.rm[1].x, self.rm[1].y,self.rm[1].z],[self.rm[2].x, self.rm[2].y, self.rm[2].z]])
         target_rm_array = np.array([[target.rm[0].x, target.rm[0].y, target.rm[0].z],[target.rm[1].x, target.rm[1].y,target.rm[1].z],[target.rm[2].x, target.rm[2].y, target.rm[2].z]])
         #error in rotation 
-        Rerr = self_rm_array.transpose * target_rm_array
+        #print('self rm',self_rm_array)
+        #print('target rm', target_rm_array)
+        #print('self rm trans',np.transpose(self_rm_array))
+        Rerr = np.matmul(np.transpose(self_rm_array), target_rm_array)
+        #print('Rerr',Rerr)
 
         #rot2omega - Transform rotation matrix into the corresponding angular velocity vector T.Sugihara, Humanoids 2009
         #uses Rerr to get error in angle (werr)
         el = np.array([[Rerr[2,1]-Rerr[1,2]], [Rerr[0,2] - Rerr[2,0]], [Rerr[1,0] - Rerr[0,1]]])
-        norm_el = norm(el)
+        
+        norm_el = np.linalg.norm(el)
+        print('norm_el', norm_el)
+        
         if norm_el > 2^(-52):
             w = atan2(norm_el, (np.trace(Rerr)-1)/norm_el * el)
+            print('1, w', w)
         elif Rerr[0,0]> 0 and Rerr[1,1] >0 and Rerr[2,2] > 0:
             w = np.array[0,0,0]
+            print('2, w', w)
         else:
             w = pi/2 * np.array([[Rerr[0,0] +1], [Rerr[1,1] +1], [Rerr[2,2]+1]])
+            print('3, w', w)
 
         #use angular velocity vector to calculate error in angle
         werr = self_rm_array * w

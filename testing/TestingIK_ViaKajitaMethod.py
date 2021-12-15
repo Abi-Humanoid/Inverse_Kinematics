@@ -92,7 +92,7 @@ print("after: rjoint_7 pos = ",j7.pos)
 print("after rjoint_7 RM = ",j7.rm) 
 
 
-j4.InverseKinematics(j5)
+j4.InverseKinematics(j7)
 
 def make_axes(length):
     x_axis = arrow(pos=vector(0,0,0), axis=length*vector(1,0,0), color=color.red)
