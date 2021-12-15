@@ -55,15 +55,18 @@ class SetupBiped:
             leg_drawing = curve([self.pos, self.parent.pos], radius = 1.5)
 
     
-    def CalcVWerr(self, target):
+    def CalcVWerr(self, target): #do we need a target link or substitute as foot
         #calculate error in position
         perr = target.pos - self.pos
-        #convert to matrices
+
+        #convert rotation matrices of self and target joint to matrices
         self_rm_array = np.array([[self.rm[0].x, self.rm[0].y, self.rm[0].z],[self.rm[1].x, self.rm[1].y,self.rm[1].z],[self.rm[2].x, self.rm[2].y, self.rm[2].z]])
         target_rm_array = np.array([[target.rm[0].x, target.rm[0].y, target.rm[0].z],[target.rm[1].x, target.rm[1].y,target.rm[1].z],[target.rm[2].x, target.rm[2].y, target.rm[2].z]])
+        #error in rotation 
         Rerr = self_rm_array.transpose * target_rm_array
 
-        #rot2omega -Transform rotation matrix into the corresponding angular velocity vector T.Sugihara, Humanoids 2009
+        #rot2omega - Transform rotation matrix into the corresponding angular velocity vector T.Sugihara, Humanoids 2009
+        #uses Rerr to get error in angle (werr)
         el = np.array([[Rerr[2,1]-Rerr[1,2]], [Rerr[0,2] - Rerr[2,0]], [Rerr[1,0] - Rerr[0,1]]])
         norm_el = norm(el)
         if norm_el > 2^(-52):
@@ -73,26 +76,33 @@ class SetupBiped:
         else:
             w = pi/2 * np.array([[Rerr[0,0] +1], [Rerr[1,1] +1], [Rerr[2,2]+1]])
 
-        #use angular velcoity vector to calculate error in ?angle
+        #use angular velocity vector to calculate error in angle
         werr = self_rm_array * w
+
         err = np.array([[perr],[werr]])
         #return both errors
         return err
 
     def CalcJacobian(self):
+        #jacobian is 6x6
         J = np.zeros(6,6)
         joint_array = [j1, j2, j3, j4, j5, j6, j7]
         
-        for n in range(2,7):
+        # dont need to do joint 1, so range excludes [0], so 1->6
+        for n in range(1,6):
+            #iterate through each in route from body to target link, which is usually the foot
             joint = joint_array(n)
-            #a =joint.rm * joint.a
+            # a = joint.rm * joint.a (joint axis vector in world frame)
             a = vector(dot(joint.rm[0], joint.a), dot(joint.rm[1], joint.a), dot(joint.rm[2], joint.a))
             #need array to append into Jacobian
             a_to_array = np.array([a.x, a.y, a.z])
+
             cross_product = cross(a, j7.pos - joint.pos)
             cross_product_array = np.array([cross_product.x, cross_product.y, cross_product.z])
-            J[:,n-1] = [cross_product_array, a_to_array]
+            #all rows in column n
+            J[:,n-1] = np.matrix([cross_product_array, a_to_array]) #right notation for matrix, or use np.array?
 
+        return J
 
     def InverseKinematics(self, target):
         #finds links from self through to foot
@@ -100,7 +110,7 @@ class SetupBiped:
         #    route.append(route.len() + 1)
 
         #update all joints 
-        #what to do with joint 1
+        # what to do with joint 1????!!!! Still need to update position and rotation of base j1
         joint_array = [j2, j3, j4, j5, j6, j7]
         for joint in joint_array:
             joint.ForwardKinematics(0)
@@ -109,21 +119,36 @@ class SetupBiped:
         err = self.CalcVWerr(target)
 
         #for loop to break at error
-        for n in range(1,10): #10 iterations
+        for n in range(1,10): #10 iterations for numerical answer
             if norm(err) < 10^(-6):
                 break
-
+            
             #calculate Jacobian
-            self.CalcJacobian()
+            J = self.CalcJacobian()
 
-        #calc adjustments
+            #calculate adjustments - delta q - of joint angles based on errors in position and attitude
+            lambdaa = 0.9
+            # eq 2.77, inverse of eq 2.75. J-1 * [vectors of end effector speed]
+            dq1 = np.divide(np.linalg.inv(J), err)
+            dq = np.multiply(lambdaa, dq1)
 
-        #addition of q + dq
+            #update joint velocity of each joint through addition of q + dq
+            for joint in joint_array: #length of base to foot
+                idx = 0
+                joint.q = joint.q + dq[idx]
+                idx = idx + 1
+            
+            #update ForwardKinematics again for all joints
+            for joint in joint_array:
+                joint.ForwardKinematics(0)
 
-        #update ForwardKinematics again for all joints
 
-        #calc error again until satisfies 
-        
+            #calc error again until satisfies 
+            err = self.CalcVWerr(target)
+
+            return 
+    
+
 
 
 # setting a, joint axis vector (roll, pitch, yaw)
