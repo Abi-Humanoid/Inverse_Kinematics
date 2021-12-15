@@ -58,7 +58,7 @@ class SetupBiped:
     def CalcVWerr(self, target): #do we need a target link or substitute as foot
         #calculate error in position
         perr = target.pos - self.pos
-
+        print('perr',perr)
         #convert rotation matrices of self and target joint to matrices
         self_rm_array = np.array([[self.rm[0].x, self.rm[0].y, self.rm[0].z],[self.rm[1].x, self.rm[1].y,self.rm[1].z],[self.rm[2].x, self.rm[2].y, self.rm[2].z]])
         target_rm_array = np.array([[target.rm[0].x, target.rm[0].y, target.rm[0].z],[target.rm[1].x, target.rm[1].y,target.rm[1].z],[target.rm[2].x, target.rm[2].y, target.rm[2].z]])
@@ -74,42 +74,51 @@ class SetupBiped:
         el = np.array([[Rerr[2,1]-Rerr[1,2]], [Rerr[0,2] - Rerr[2,0]], [Rerr[1,0] - Rerr[0,1]]])
         
         norm_el = np.linalg.norm(el)
-        print('norm_el', norm_el)
-        
+        #print('norm_el', norm_el)
+
         if norm_el > 2^(-52):
-            w = atan2(norm_el, (np.trace(Rerr)-1)/norm_el * el)
-            print('1, w', w)
+            #print('tan norm_el', atan2(norm_el, np.trace(Rerr)-1))
+            
+            w = atan2(norm_el, np.trace(Rerr)-1)/norm_el * el
+            #print('1, w', w)
         elif Rerr[0,0]> 0 and Rerr[1,1] >0 and Rerr[2,2] > 0:
             w = np.array[0,0,0]
             print('2, w', w)
         else:
             w = pi/2 * np.array([[Rerr[0,0] +1], [Rerr[1,1] +1], [Rerr[2,2]+1]])
             print('3, w', w)
-
+        print('w',w)
+        print('self rm array',self_rm_array)
         #use angular velocity vector to calculate error in angle
-        werr = self_rm_array * w
+        werr = np.matmul(self_rm_array, w)
+        print('werr',werr)
 
-        err = np.array([[perr],[werr]])
+        #put into 6x1 array, change perr from vector
+        err = np.array([perr.x, perr.y, perr.z, werr[0,0], werr[1,0], werr[2,0]])
+
+        print('err',err)
         #return both errors
         return err
 
     def CalcJacobian(self):
         #jacobian is 6x6
-        J = np.zeros(6,6)
-        joint_array = [j1, j2, j3, j4, j5, j6, j7]
+        J = np.zeros((6,6))
+        joint_array = np.array([j1, j2, j3, j4, j5, j6, j7])
         
         # dont need to do joint 1, so range excludes [0], so 1->6
         for n in range(1,6):
             #iterate through each in route from body to target link, which is usually the foot
-            joint = joint_array(n)
+            joint = joint_array[n]
             # a = joint.rm * joint.a (joint axis vector in world frame)
             a = vector(dot(joint.rm[0], joint.a), dot(joint.rm[1], joint.a), dot(joint.rm[2], joint.a))
             #need array to append into Jacobian
             a_to_array = np.array([a.x, a.y, a.z])
-
+            print('a',a_to_array)
             cross_product = cross(a, j7.pos - joint.pos)
             cross_product_array = np.array([cross_product.x, cross_product.y, cross_product.z])
+            print('cross',cross_product_array)
             #all rows in column n
+            print('J', np.matrix([cross_product_array, a_to_array]))
             J[:,n-1] = np.matrix([cross_product_array, a_to_array]) #right notation for matrix, or use np.array?
 
         return J
@@ -127,10 +136,10 @@ class SetupBiped:
         
         #calculate errors
         err = self.CalcVWerr(target)
-
+        print('norm of err', np.linalg.norm(err))
         #for loop to break at error
         for n in range(1,10): #10 iterations for numerical answer
-            if norm(err) < 10^(-6):
+            if np.linalg.norm(err) < 10^(-6):
                 break
             
             #calculate Jacobian
