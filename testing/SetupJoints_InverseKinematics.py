@@ -63,8 +63,8 @@ class SetupBiped:
         self_rm_array = np.array([[self.rm[0].x, self.rm[0].y, self.rm[0].z],[self.rm[1].x, self.rm[1].y,self.rm[1].z],[self.rm[2].x, self.rm[2].y, self.rm[2].z]])
         target_rm_array = np.array([[target.rm[0].x, target.rm[0].y, target.rm[0].z],[target.rm[1].x, target.rm[1].y,target.rm[1].z],[target.rm[2].x, target.rm[2].y, target.rm[2].z]])
         #error in rotation 
-        #print('self rm',self_rm_array)
-        #print('target rm', target_rm_array)
+        print('self rm',self_rm_array)
+        print('target rm', target_rm_array)
         #print('self rm trans',np.transpose(self_rm_array))
         Rerr = np.matmul(np.transpose(self_rm_array), target_rm_array)
         #print('Rerr',Rerr)
@@ -104,7 +104,7 @@ class SetupBiped:
         #jacobian is 6x6
         J = np.zeros((6,6))
         joint_array = np.array([self, self.child, self.child.child, self.child.child.child, self.child.child.child.child, self.child.child.child.child.child])
-        
+        print('self rm', self.rm)
         # dont need to do joint 1, so range is 6 joints, for loop doesn't run for n = 7
         for n in range(6):
             #iterate through each in route from body to target link, which is usually the foot
@@ -118,8 +118,8 @@ class SetupBiped:
             #need array to append into Jacobian
             a_to_array = np.array([a.x, a.y, a.z])
             #print('a',a_to_array)
-            cross_product = cross(a, j7.pos - joint.pos)
-            print('minus ', j7.pos - joint.pos)
+            cross_product = cross(a, self.child.child.child.child.child.pos - joint.pos)
+            print('minus ', self.child.child.child.child.child.pos - joint.pos)
             print('cross_product',cross_product)
             
             cross_product_array = np.array([cross_product.x, cross_product.y, cross_product.z])
@@ -242,6 +242,7 @@ j8.child = j9
 j9.child = j10
 j10.child = j11
 j12.child = j13
+
 
 j1.draw()
 j2.draw()

@@ -59,7 +59,7 @@ scene.range = 180
 
 # set rotation matrix of parent (may be identity)
 #rotates x axis for 60 degrees
-theta = -90
+theta = -80
 #x axis rotation
 #ex = vector(1,0,0)
 #ey = vector(0,np.cos(np.radians(theta)),-np.sin(np.radians(theta)))
@@ -69,13 +69,17 @@ theta = -90
 ex = vector(np.cos(np.radians(theta)),0,np.sin(np.radians(theta)))
 ey = vector(0,1,0)
 ez = vector(-np.sin(np.radians(theta)),0, np.cos(np.radians(theta)))
-parent_RM = [ex, ey, ez] #x, y, z 
 
-j2.rm = parent_RM
-j2.forwardKinematics(0)
-j3.forwardKinematics(0)
-j4.ForwardKinematics(0)
+j2.rm = [ex, ey, ez]
+j3.ForwardKinematics(0)
 
+theta = -50
+#x axis rotation
+ex = vector(1,0,0)
+ey = vector(0,np.cos(np.radians(theta)),-np.sin(np.radians(theta)))
+ez = vector(0,np.sin(np.radians(theta)), np.cos(np.radians(theta)))
+j4.rm = [ex, ey, ez]
+j5.ForwardKinematics(0)
 theta = 80
 #x axis rotation
 ex = vector(1,0,0)
@@ -107,11 +111,14 @@ print("after rjoint_6 RM = ",j6.rm)
 print("before: rjoint_7 pos = ",j7.pos)
 print("before rjoint_7 RM = ",j7.rm) 
 j7.ForwardKinematics(0)
+"""
+print("after: rjoint_2 pos = ",j2.pos)
+print("after rjoint_2 RM = ",j2.rm) 
 print("after: rjoint_7 pos = ",j7.pos)
 print("after rjoint_7 RM = ",j7.rm) 
-"""
 
-j7.pos = vector(50, 36.2, 47.2)
+
+j7.pos = vector(50, 48.5047, -17.286)
 theta = 20
 #z axis rotation
 ex = vector(np.cos(np.radians(theta)),-np.sin(np.radians(theta)),0)
