@@ -18,7 +18,6 @@ eye_rm = [ex, ey, ez] #x, y, z
 #joint 1 is body, increasing joint no = down right leg, j7 is foot
 #Axis as defined in VPython setup
 #Need to make b a parameter from initial setup
-#change square brackets to ()
 
 j1 = SetupBiped(1, UY, 0, vector(67, 86, 0), eye_rm )
 j2 = SetupBiped(2, UY, 0, vector(58, 86, 0), eye_rm, vector(-9,0,0),  j1)
@@ -59,73 +58,96 @@ scene.range = 180
 
 # set rotation matrix of parent (may be identity)
 #rotates x axis for 60 degrees
-theta = -80
-#x axis rotation
-#ex = vector(1,0,0)
-#ey = vector(0,np.cos(np.radians(theta)),-np.sin(np.radians(theta)))
-#ez = vector(0,np.sin(np.radians(theta)), np.cos(np.radians(theta)))
-
-#y axis rotation
-ex = vector(np.cos(np.radians(theta)),0,np.sin(np.radians(theta)))
-ey = vector(0,1,0)
-ez = vector(-np.sin(np.radians(theta)),0, np.cos(np.radians(theta)))
-
-j2.rm = [ex, ey, ez]
-j3.ForwardKinematics(0)
-
-theta = -50
+theta = -40
 #x axis rotation
 ex = vector(1,0,0)
 ey = vector(0,np.cos(np.radians(theta)),-np.sin(np.radians(theta)))
 ez = vector(0,np.sin(np.radians(theta)), np.cos(np.radians(theta)))
+
+#y axis rotation
+#ex = vector(np.cos(np.radians(theta)),0,np.sin(np.radians(theta)))
+#ey = vector(0,1,0)
+#ez = vector(-np.sin(np.radians(theta)),0, np.cos(np.radians(theta)))
+
+#z axis rotation
+#ex = vector(np.cos(np.radians(theta)),-np.sin(np.radians(theta)),0)
+#ey = vector(np.sin(np.radians(theta)),np.cos(np.radians(theta)),0)
+#ez = vector(0,0,1)
+
 j4.rm = [ex, ey, ez]
-j5.ForwardKinematics(0)
+j5.ForwardKinematics()
+
+theta = 50
+#x axis rotation
+ex = vector(1,0,0)
+ey = vector(0,np.cos(np.radians(theta)),-np.sin(np.radians(theta)))
+ez = vector(0,np.sin(np.radians(theta)), np.cos(np.radians(theta)))
+j5.rm = [ex, ey, ez]
+j6.ForwardKinematics()
+j7.ForwardKinematics()
+
+
+"""
 theta = 80
 #x axis rotation
 ex = vector(1,0,0)
 ey = vector(0,np.cos(np.radians(theta)),-np.sin(np.radians(theta)))
 ez = vector(0,np.sin(np.radians(theta)), np.cos(np.radians(theta)))
 j5.rm = [ex, ey, ez]
-j6.ForwardKinematics(0)
-j7.ForwardKinematics(0)
-"""
-print("before: rjoint_5 pos = ",j5.pos)
-print("before: rjoint_5 RM = ",j5.rm) 
-j5.ForwardKinematics(0)
+j6.ForwardKinematics()
+j7.ForwardKinematics()
 
-print("after: rjoint_5 pos = ",j5.pos)
-print("after: rjoint_5 RM = ",j5.rm)  
-print("before: rjoint_6 pos = ",j6.pos)
-print("before rjoint_6 RM = ",j6.rm) 
 
 ex = vector(1,0,0)
 ey = vector(0,0.95,0.30)
 ez = vector(0,-0.30,0.95)
 j5_RM = [ex, ey, ez] #x, y, z 
 j5.rm = j5_RM
-
-j6.ForwardKinematics(0)
+ 
+j6.ForwardKinematics()
 print("after: rjoint_6 pos = ",j6.pos)
 print("after rjoint_6 RM = ",j6.rm) 
 
 print("before: rjoint_7 pos = ",j7.pos)
 print("before rjoint_7 RM = ",j7.rm) 
-j7.ForwardKinematics(0)
-"""
+j7.ForwardKinematics()
+
 print("after: rjoint_2 pos = ",j2.pos)
 print("after rjoint_2 RM = ",j2.rm) 
 print("after: rjoint_7 pos = ",j7.pos)
 print("after rjoint_7 RM = ",j7.rm) 
+"""
 
+#goes 'half sitting' for non-singular pose
+j4.q = radians(-5.0)
+j5.q = radians(10)
+j6.q = radians(-5.0)
+j10.q = radians(-5.0)
+j11.q = radians(10)
+j12.q = radians(-5.0)
 
-j7.pos = vector(50, 48.5047, -17.286)
-theta = 20
-#z axis rotation
-ex = vector(np.cos(np.radians(theta)),-np.sin(np.radians(theta)),0)
-ey = vector(np.sin(np.radians(theta)),np.cos(np.radians(theta)),0)
-ez = vector(0,0,1)
-j7.rm = [ex, ey, ez]
-j2.InverseKinematics(j7)
+#before state drawing
+j1.draw()
+j2.draw()
+j3.draw()
+j4.draw()
+j5.draw()
+j6.draw()
+j7.draw()
+j8.draw()
+j9.draw()
+j10.draw()
+j11.draw()
+j12.draw()
+j13.draw()
+
+print("rjoint_7 pos = ", j7.pos)
+
+#j7 = SetupBiped(7, UZ, 0, vector(50, 0, 0),  eye_rm, vector(0, -19,0),j6)
+target_pos = vector(50, 23.6718, 11.8512)
+target_rm = eye_rm
+
+j7.InverseKinematics(target_pos, target_rm)
 
 
 
