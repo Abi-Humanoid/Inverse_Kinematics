@@ -127,6 +127,7 @@ j11.q = radians(10)
 j12.q = radians(-5.0)
 
 #before state drawing
+"""
 j1.draw()
 j2.draw()
 j3.draw()
@@ -140,11 +141,11 @@ j10.draw()
 j11.draw()
 j12.draw()
 j13.draw()
-
+"""
 print("rjoint_7 pos = ", j7.pos)
 
 #j7 = SetupBiped(7, UZ, 0, vector(50, 0, 0),  eye_rm, vector(0, -19,0),j6)
-target_pos = vector(50, 23.6718, 11.8512)
+target_pos = vector(50, 20.6718, -11.8512)
 target_rm = eye_rm
 
 j7.InverseKinematics(target_pos, target_rm)

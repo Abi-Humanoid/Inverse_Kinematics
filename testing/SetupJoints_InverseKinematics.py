@@ -1,3 +1,4 @@
+from numpy.lib.index_tricks import diag_indices
 from vpython import *
 import numpy as np
 # Uses Kajita matlab script as basis
@@ -26,30 +27,31 @@ class SetupBiped:
         # cant do dot product on 3x3 vector, so seperate operations, make into vector parent_RM_mult_b that is 1x3
         # equivalent to rm * b
         parent_rm_mul_b= vector(dot(self.parent.rm[0], self.b), dot(self.parent.rm[1], self.b), dot(self.parent.rm[2], self.b))
-        #print('parent', self.parent.number)
-        #print('parents rm', self.parent.rm)
+        
+        
         self.pos = parent_rm_mul_b + self.parent.pos
-        #print('self pos', self.pos)
-        #print('self rm', self.rm)
+        
 
         #Rodrigues formula
         eye = [[1,0,0],[0,1,0],[0,0,1]] #for rodrigues
+        
+
         wedge = np.array([[0, -self.a.z, self.a.y], [self.a.z, 0, -self.a.x], [-self.a.y, self.a.x, 0]])#3x3
+        
         squared = wedge.dot(wedge)
+        
         e = np.array(eye + wedge*sin(self.q) + squared*(1-cos(self.q))) #R = eye(3) + w_wedge * sin(th) + w_wedge^2 * (1-cos(th));
-        #print("e = ",e)
+        
         
         #convert parent's rotation matrix (vector) to array so that dot product works
         rm_to_array = np.array([[self.parent.rm[0].x, self.parent.rm[0].y, self.parent.rm[0].z],[self.parent.rm[1].x, self.parent.rm[1].y,self.parent.rm[1].z],[ self.parent.rm[2].x, self.parent.rm[2].y, self.parent.rm[2].z]])
-        self.rm =np.dot(rm_to_array, e)
-
+        self.rm =np.matmul(rm_to_array, e)
+        
         #convert back to make into array of vectors as used to update position, a vector
         row_1 = vector(self.rm[0,0], self.rm[0,1], self.rm[0,2])
         row_2 = vector(self.rm[1,0], self.rm[1,1], self.rm[1,2])
         row_3 = vector(self.rm[2,0], self.rm[2,1], self.rm[2,2])
         self.rm = [row_1,row_2,row_3]
-        #print('after fk: self rm', self.pos)
-        #print('after fk: self rm', self.rm)
         
         
         
@@ -65,25 +67,20 @@ class SetupBiped:
     def CalcVWerr(self, target_pos, target_rm): #do we need a target link or substitute as foot
         #calculate error in position
         perr = target_pos - self.pos
-        #print('perr',perr)
+    
         #convert rotation matrices of self and target joint to matrices
         self_rm_array = np.array([[self.rm[0].x, self.rm[0].y, self.rm[0].z],[self.rm[1].x, self.rm[1].y,self.rm[1].z],[self.rm[2].x, self.rm[2].y, self.rm[2].z]])
         target_rm_array = np.array([[target_rm[0].x, target_rm[0].y, target_rm[0].z],[target_rm[1].x, target_rm[1].y,target_rm[1].z],[target_rm[2].x, target_rm[2].y, target_rm[2].z]])
-        #print('self rm',self_rm_array)
-        #print('target rm', target_rm_array)
-        #print('self rm trans',np.transpose(self_rm_array))
-
+        
         #error in rotation 
         Rerr = np.matmul(np.transpose(self_rm_array), target_rm_array)
-        #print('Rerr',Rerr)
-
+        
         #rot2omega - Transform rotation matrix into the corresponding angular velocity vector T.Sugihara, Humanoids 2009
         #uses Rerr to get error in angle (werr)
         el = np.array([[Rerr[2,1]-Rerr[1,2]], [Rerr[0,2] - Rerr[2,0]], [Rerr[1,0] - Rerr[0,1]]])
         
         norm_el = np.linalg.norm(el)
-        #print('norm_el', norm_el)
-
+        
         if norm_el > 2^(-52):
             #print('tan norm_el', atan2(norm_el, np.trace(Rerr)-1))
             w = np.nan_to_num(atan2(norm_el, np.trace(Rerr)-1)/norm_el)
@@ -95,16 +92,12 @@ class SetupBiped:
         else:
             w = pi/2 * np.array([[Rerr[0,0] +1], [Rerr[1,1] +1], [Rerr[2,2]+1]])
             #print('3, w', w)
-        #print('w',w)
-        #print('self rm array',self_rm_array)
+       
         #use angular velocity vector to calculate error in angle
         werr = np.matmul(self_rm_array, w)
-        #print('werr',werr)
 
         #put into 6x1 array, change perr from vector
         err = np.array([perr.x, perr.y, perr.z, werr[0,0], werr[1,0], werr[2,0]])
-        #print('err', err)
-        #print('err',err)
         #return both errors
         return err
 
@@ -112,15 +105,12 @@ class SetupBiped:
         #jacobian is 6x6
         J = np.zeros((6,6))
         joint_array = np.array([self.parent.parent.parent.parent.parent, self.parent.parent.parent.parent, self.parent.parent.parent, self.parent.parent, self.parent, self])
-        #print('self rm', self.rm)
         # dont need to do joint 1, so range is 6 joints, for loop doesn't run for n = 7
         x = range(0,6)
         for n in x:
             #iterate through each in route from body to target link, which is usually the foot
             joint = joint_array[n]
-            #print('joint',joint.number)
-            #print('joint r,',joint.rm)
-            #print('joints a,',joint.a)
+            
             # a = joint.rm * joint.a (joint axis vector in world frame)
             a = vector(dot(joint.rm[0], joint.a), dot(joint.rm[1], joint.a), dot(joint.rm[2], joint.a))
             #print('a',a)
@@ -128,19 +118,15 @@ class SetupBiped:
             a_to_array = np.array([a.x, a.y, a.z])
             #print('a',a_to_array)
             cross_product = cross(a, j7.pos - joint.pos)
-            #print('minus ', self.child.child.child.child.child.pos - joint.pos)
             #print('cross_product',cross_product)
-            
             cross_product_array = np.array([cross_product.x, cross_product.y, cross_product.z])
             #print('cross into array',cross_product_array)
             #all rows in column n
-
             column = np.append([cross_product_array], [a_to_array])
             #print('column', column)
             J[:,n] = np.transpose(column) #right notation for matrix, or use np.array?
         
         J = np.array(J)
-        print('J', J)
         return J
 
     def InverseKinematics(self, target_pos, target_rm):
@@ -152,14 +138,23 @@ class SetupBiped:
         # what to do with joint 1????!!!! Still need to update position and rotation of base j1
         #below same as [j2, j3, j4, j5, j6, j7], but doesnt re-initialise from calling testing script
         joint_array = [self.parent.parent.parent.parent.parent, self.parent.parent.parent.parent, self.parent.parent.parent, self.parent.parent, self.parent, self]
-        
+        wn_pos = 1/0.3
+        wn_ang = 1/(2*pi)
+        We = np.diagflat([wn_pos, wn_pos, wn_pos, wn_ang, wn_ang, wn_ang])
+        Wn = np.identity(6)
+
         print('first forward kinematics')
         for joint in joint_array:
             joint.ForwardKinematics()
-            
+
+        for joint in joint_array:
+            joint.draw()
+
         #calculate errors
         err = self.CalcVWerr(target_pos, target_rm)
-        print('norm of err', np.linalg.norm(err))
+        Ek = np.matmul(np.transpose(err), We, err)
+
+        #print('norm of err', np.linalg.norm(err))
         #for loop to break at error
         for n in range(1,10): #10 iterations for numerical answer
             if np.linalg.norm(err) < 10^(-6):
@@ -169,7 +164,7 @@ class SetupBiped:
             J = self.CalcJacobian()
         
             #calculate adjustments - delta q - of joint angles based on errors in position and attitude
-            set_lambda = 0.9
+            set_lambda = 0.5
             # eq 2.77, inverse of eq 2.75. J-1 * [vectors of end effector speed]
             #print('J',J)
             dq1 = np.linalg.solve(J,np.transpose(err)) #np.nan_to_num(np.matmul(np.linalg.inv(J), err))
