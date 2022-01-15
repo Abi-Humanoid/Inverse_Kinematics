@@ -141,7 +141,9 @@ class SetupBiped:
         wn_pos = 1/0.3
         wn_ang = 1/(2*pi)
         We = np.diagflat([wn_pos, wn_pos, wn_pos, wn_ang, wn_ang, wn_ang])
+        print('We',We)
         Wn = np.identity(6)
+        print('Wn',Wn)
 
         print('first forward kinematics')
         for joint in joint_array:
@@ -152,38 +154,48 @@ class SetupBiped:
 
         #calculate errors
         err = self.CalcVWerr(target_pos, target_rm)
-        Ek = np.matmul(np.transpose(err), We, err)
+        Ek = np.matmul(np.matmul(err, We), np.transpose(err))
+        #Ek = np.matmul(Ek,np.transpose(err))
+        #print('err',err)
+        #print('Ek',Ek)
 
         #print('norm of err', np.linalg.norm(err))
         #for loop to break at error
         for n in range(1,10): #10 iterations for numerical answer
-            if np.linalg.norm(err) < 10^(-6):
-                break
+            #if np.linalg.norm(err) < 10^(-6):
+            #    break
 
             #calculate Jacobian
             J = self.CalcJacobian()
         
             #calculate adjustments - delta q - of joint angles based on errors in position and attitude
-            set_lambda = 0.5
+            set_lambda = Ek + 0.002 #previously 0.5
+            Jh = np.matmul(np.matmul(np.transpose(J),We),J) + Wn*set_lambda
+            #print('Jg',Jh)
+            gerr = np.matmul(np.matmul(np.transpose(J),We),err)
+            dq2 = np.linalg.solve(Jh,gerr)
+            #print('new dq2',dq2)
+            #print('gerr',gerr)
+
             # eq 2.77, inverse of eq 2.75. J-1 * [vectors of end effector speed]
             #print('J',J)
-            dq1 = np.linalg.solve(J,np.transpose(err)) #np.nan_to_num(np.matmul(np.linalg.inv(J), err))
+            dq1 = np.linalg.solve(J,np.transpose(err)) #equivalent to  (J \ err) NOT np.nan_to_num(np.matmul(np.linalg.inv(J), err))
             #print('dq1',dq1)
             dq = np.multiply(dq1, set_lambda)
             #print('dq',dq)
-
+            #print('old dq',dq)
             
             #'Move Joints'
             #update joint velocity of each joint through addition of q + dq
             idx = 0
             for joint in joint_array: #length of base to foot
                 #print('dq[idx]', dq[idx])
-                joint.q = joint.q + dq[idx]
+                joint.q = joint.q + dq2[idx] # changed to dq2
                 #print('joint no', joint.number,)
                 #print('joint.q', joint.q)
                 idx = idx + 1
 
-            print('forward kinematics round', n+1)
+            #print('forward kinematics round', n+1)
             #update ForwardKinematics again for all joints
             for joint in joint_array:
                 joint.ForwardKinematics()
@@ -191,6 +203,21 @@ class SetupBiped:
 
             #calc error again until satisfies 
             err = self.CalcVWerr(target_pos, target_rm)
+            Ek2 = np.matmul(np.matmul(err, We), np.transpose(err)) #same as Ek, but in loop
+            if Ek2 < 10^(-12):
+                break
+            elif Ek2 < Ek:
+                Ek = Ek2
+            else:
+                #'Move Joints'
+                #update joint velocity of each joint through addition of q + dq
+                idx = 0
+                dq2 = -dq2
+                for joint in joint_array: #length of base to foot
+                    joint.q = joint.q + dq2[idx] # changed to dq2
+                    idx = idx + 1
+
+
 
         for joint in joint_array:
             joint.draw()

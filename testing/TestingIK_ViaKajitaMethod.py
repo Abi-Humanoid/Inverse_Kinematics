@@ -145,11 +145,18 @@ j13.draw()
 print("rjoint_7 pos = ", j7.pos)
 
 #j7 = SetupBiped(7, UZ, 0, vector(50, 0, 0),  eye_rm, vector(0, -19,0),j6)
-target_pos = vector(50, 20.6718, -11.8512)
+target_pos = vector(50, 25, 15)
 target_rm = eye_rm
 
 j7.InverseKinematics(target_pos, target_rm)
-
+"""
+for n in range(1,8):
+    angle = 50
+    target_pos.z = target_pos.z + cos(angle)*20
+    target_pos.y = target_pos.y + sin(angle)*20
+    j7.InverseKinematics(target_pos, target_rm)
+    angle = angle - 10
+"""
 
 
 def make_axes(length):
