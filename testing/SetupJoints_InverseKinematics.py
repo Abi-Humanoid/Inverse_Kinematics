@@ -138,19 +138,19 @@ class SetupBiped:
         # what to do with joint 1????!!!! Still need to update position and rotation of base j1
         #below same as [j2, j3, j4, j5, j6, j7], but doesnt re-initialise from calling testing script
         joint_array = [self.parent.parent.parent.parent.parent, self.parent.parent.parent.parent, self.parent.parent.parent, self.parent.parent, self.parent, self]
+        
+        #LM least damped squares method
         wn_pos = 1/0.3
         wn_ang = 1/(2*pi)
         We = np.diagflat([wn_pos, wn_pos, wn_pos, wn_ang, wn_ang, wn_ang])
-        print('We',We)
         Wn = np.identity(6)
-        print('Wn',Wn)
-
-        print('first forward kinematics')
+        
+        
         for joint in joint_array:
             joint.ForwardKinematics()
 
-        for joint in joint_array:
-            joint.draw()
+        #for joint in joint_array:
+        #    joint.draw()
 
         #calculate errors
         err = self.CalcVWerr(target_pos, target_rm)
@@ -219,9 +219,7 @@ class SetupBiped:
 
 
 
-        for joint in joint_array:
-            joint.draw()
-            print("joint pos = ", joint.pos)
+        print("Final joint position = ", self.pos)
 
              
 

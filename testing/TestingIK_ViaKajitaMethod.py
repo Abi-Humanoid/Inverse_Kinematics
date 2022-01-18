@@ -1,6 +1,7 @@
 from vpython import *
 from time import *
 import numpy as np
+import math
 
 #CHANGE FROM TO CORRECT FILE FOR FK // IK
 from SetupJoints_InverseKinematics import SetupBiped
@@ -74,6 +75,28 @@ ez = vector(0,np.sin(np.radians(theta)), np.cos(np.radians(theta)))
 #ey = vector(np.sin(np.radians(theta)),np.cos(np.radians(theta)),0)
 #ez = vector(0,0,1)
 
+#goes 'half sitting' for non-singular pose
+j4.q = radians(-5.0)
+j5.q = radians(10)
+j6.q = radians(-5.0)
+j10.q = radians(-5.0)
+j11.q = radians(10)
+j12.q = radians(-5.0)
+
+
+target_pos = vector(50, 20, -10)
+target_rm = eye_rm
+
+j7.InverseKinematics(target_pos, target_rm)
+
+j2.draw()
+j3.draw()
+j4.draw()
+j5.draw()
+j6.draw()
+j7.draw()
+
+"""
 j4.rm = [ex, ey, ez]
 j5.ForwardKinematics()
 
@@ -87,7 +110,7 @@ j6.ForwardKinematics()
 j7.ForwardKinematics()
 
 
-"""
+
 theta = 80
 #x axis rotation
 ex = vector(1,0,0)
@@ -117,24 +140,8 @@ print("after rjoint_2 RM = ",j2.rm)
 print("after: rjoint_7 pos = ",j7.pos)
 print("after rjoint_7 RM = ",j7.rm) 
 """
-
-#goes 'half sitting' for non-singular pose
-j4.q = radians(-5.0)
-j5.q = radians(10)
-j6.q = radians(-5.0)
-j10.q = radians(-5.0)
-j11.q = radians(10)
-j12.q = radians(-5.0)
-
 #before state drawing
-"""
 j1.draw()
-j2.draw()
-j3.draw()
-j4.draw()
-j5.draw()
-j6.draw()
-j7.draw()
 j8.draw()
 j9.draw()
 j10.draw()
@@ -142,23 +149,6 @@ j11.draw()
 j12.draw()
 j13.draw()
 """
-print("rjoint_7 pos = ", j7.pos)
-
-#j7 = SetupBiped(7, UZ, 0, vector(50, 0, 0),  eye_rm, vector(0, -19,0),j6)
-target_pos = vector(50, 25, 15)
-target_rm = eye_rm
-
-j7.InverseKinematics(target_pos, target_rm)
-"""
-for n in range(1,8):
-    angle = 50
-    target_pos.z = target_pos.z + cos(angle)*20
-    target_pos.y = target_pos.y + sin(angle)*20
-    j7.InverseKinematics(target_pos, target_rm)
-    angle = angle - 10
-"""
-
-
 def make_axes(length):
     x_axis = arrow(pos=vector(0,0,0), axis=length*vector(1,0,0), color=color.red)
     neg_xaxis = x_axis.clone()
@@ -177,6 +167,57 @@ def make_axes(length):
     zlabel = label(text="z", color=color.blue, pos=z_axis.pos+z_axis.axis)
     return
 
-while True:
-    make_axes(20)
-    pass
+#j7 = SetupBiped(7, UZ, 0, vector(50, 0, 0),  eye_rm, vector(0, -19,0),j6)
+target_pos = vector(50, 27, 35)
+target_rm = eye_rm
+
+j7.InverseKinematics(target_pos, target_rm)
+
+
+target_pos = vector(50, 27, -35)
+j7.InverseKinematics(target_pos, target_rm)
+j2.draw()
+j3.draw()
+j4.draw()
+j5.draw()
+j6.draw()
+j7.draw()
+scene.pause()
+
+target_pos = vector(50, 10, 15)
+j7.InverseKinematics(target_pos, target_rm)
+j2.draw()
+j3.draw()
+j4.draw()
+j5.draw()
+j6.draw()
+j7.draw()
+scene.pause()
+
+target_pos = vector(50, 27, 35)
+j7.InverseKinematics(target_pos, target_rm)
+j2.draw()
+j3.draw()
+j4.draw()
+j5.draw()
+j6.draw()
+j7.draw()
+
+
+
+
+
+for n in range(1,4):
+    angle = 5
+    target_pos.z = target_pos.z + math.cos(angle)*40
+    target_pos.y = target_pos.y + math.sin(angle)*40
+    j7.InverseKinematics(target_pos, target_rm)
+    scene.pause()
+    angle = angle + 20
+"""
+
+
+
+#while True:
+#    make_axes(20)
+#    pass
