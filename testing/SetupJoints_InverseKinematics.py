@@ -101,7 +101,7 @@ class SetupBiped:
         #return both errors
         return err
 
-    def CalcJacobian(self):
+    def CalcJacobian(self,target_pos):
         #jacobian is 6x6
         J = np.zeros((6,6))
         joint_array = np.array([self.parent.parent.parent.parent.parent, self.parent.parent.parent.parent, self.parent.parent.parent, self.parent.parent, self.parent, self])
@@ -117,7 +117,7 @@ class SetupBiped:
             #need array to append into Jacobian
             a_to_array = np.array([a.x, a.y, a.z])
             #print('a',a_to_array)
-            cross_product = cross(a, j7.pos - joint.pos)
+            cross_product = cross(a, target_pos - joint.pos)
             #print('cross_product',cross_product)
             cross_product_array = np.array([cross_product.x, cross_product.y, cross_product.z])
             #print('cross into array',cross_product_array)
@@ -166,7 +166,7 @@ class SetupBiped:
             #    break
 
             #calculate Jacobian
-            J = self.CalcJacobian()
+            J = self.CalcJacobian(target_pos)
         
             #calculate adjustments - delta q - of joint angles based on errors in position and attitude
             set_lambda = Ek + 0.002 #previously 0.5
@@ -218,7 +218,7 @@ class SetupBiped:
                     idx = idx + 1
 
 
-
+        
         print("Final joint position = ", self.pos)
 
              

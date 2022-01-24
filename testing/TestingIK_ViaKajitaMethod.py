@@ -1,5 +1,6 @@
 from vpython import *
 from time import *
+import random
 import numpy as np
 import math
 
@@ -76,15 +77,15 @@ ez = vector(0,np.sin(np.radians(theta)), np.cos(np.radians(theta)))
 #ez = vector(0,0,1)
 
 #goes 'half sitting' for non-singular pose
-j4.q = radians(-5.0)
-j5.q = radians(10)
-j6.q = radians(-5.0)
+j4.q = radians(-10.0)
+j5.q = radians(20)
+j6.q = radians(-10.0)
 j10.q = radians(-5.0)
 j11.q = radians(10)
 j12.q = radians(-5.0)
 
 
-target_pos = vector(50, 20, -10)
+target_pos = vector(50, 40, -30)
 target_rm = eye_rm
 
 j7.InverseKinematics(target_pos, target_rm)
@@ -149,23 +150,6 @@ j11.draw()
 j12.draw()
 j13.draw()
 """
-def make_axes(length):
-    x_axis = arrow(pos=vector(0,0,0), axis=length*vector(1,0,0), color=color.red)
-    neg_xaxis = x_axis.clone()
-    neg_xaxis.axis *= -1
-
-    y_axis = arrow(pos=vector(0,0,0), axis=length*vector(0,1,0), color=color.green)
-    neg_yaxis = y_axis.clone()
-    neg_yaxis.axis *= -1
-
-    z_axis = arrow(pos=vector(0,0,0), axis=length*vector(0,0,1), color=color.blue)
-    neg_zaxis = z_axis.clone()
-    neg_zaxis.axis *= -1
-
-    xlabel = label(text="x", color=color.red, pos=x_axis.pos+x_axis.axis)
-    ylabel = label(text="y", color=color.green, pos=y_axis.pos+y_axis.axis)
-    zlabel = label(text="z", color=color.blue, pos=z_axis.pos+z_axis.axis)
-    return
 
 #j7 = SetupBiped(7, UZ, 0, vector(50, 0, 0),  eye_rm, vector(0, -19,0),j6)
 target_pos = vector(50, 27, 35)
@@ -205,19 +189,44 @@ j7.draw()
 
 
 
-
-
-for n in range(1,4):
-    angle = 5
-    target_pos.z = target_pos.z + math.cos(angle)*40
-    target_pos.y = target_pos.y + math.sin(angle)*40
-    j7.InverseKinematics(target_pos, target_rm)
-    scene.pause()
-    angle = angle + 20
 """
 
+for n in range(1,10):
+    angle = 5
+    target_pos.z = random.randint(-50,50)
+    target_pos.y = random.randint(-50,50)
+    j4.q = radians(-10.0)
+    j5.q = radians(20)
+    j6.q = radians(-10.0)
+    j7.InverseKinematics(target_pos, target_rm)
+    j2.draw()
+    j3.draw()
+    j4.draw()
+    j5.draw()
+    j6.draw()
+    j7.draw()
+    scene.pause()
+    angle = angle + 20
 
 
-#while True:
-#    make_axes(20)
-#    pass
+def make_axes(length):
+    x_axis = arrow(pos=vector(0,0,0), axis=length*vector(1,0,0), color=color.red)
+    neg_xaxis = x_axis.clone()
+    neg_xaxis.axis *= -1
+
+    y_axis = arrow(pos=vector(0,0,0), axis=length*vector(0,1,0), color=color.green)
+    neg_yaxis = y_axis.clone()
+    neg_yaxis.axis *= -1
+
+    z_axis = arrow(pos=vector(0,0,0), axis=length*vector(0,0,1), color=color.blue)
+    neg_zaxis = z_axis.clone()
+    neg_zaxis.axis *= -1
+
+    xlabel = label(text="x", color=color.red, pos=x_axis.pos+x_axis.axis)
+    ylabel = label(text="y", color=color.green, pos=y_axis.pos+y_axis.axis)
+    zlabel = label(text="z", color=color.blue, pos=z_axis.pos+z_axis.axis)
+    return
+
+while True:
+    make_axes(20)
+    pass
