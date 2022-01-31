@@ -1,10 +1,11 @@
 import os
+import numpy as np
 
-if os.name == 'nt': #windows os
+if os.name == 'nt': #windows OS
     import msvcrt
     def getch():
         return msvcrt.getch().decode()
-else:
+else: #macOS, linux
     import sys, tty, termios
     fd = sys.stdin.fileno()
     old_settings = termios.tcgetattr(fd)
@@ -16,46 +17,35 @@ else:
             termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
         return ch
 
-from dynamixel_sdk import * # Uses Dynamixel SDK library
 
-#********* DYNAMIXEL Model definition *********
-#***** (Use only one definition at a time) *****
-# MY_DXL = 'X_SERIES'       # X330 (5.0 V recommended), X430, X540, 2X430
-MY_DXL = 'MX_SERIES'    # MX series with 2.0 firmware update.
-# MY_DXL = 'PRO_SERIES'   # H54, H42, M54, M42, L54, L42
-# MY_DXL = 'PRO_A_SERIES' # PRO series with (A) firmware update.
-# MY_DXL = 'P_SERIES'     # PH54, PH42, PM54
-# MY_DXL = 'XL320'        # [WARNING] Operating Voltage : 7.4V
-
+from dynamixel_sdk import *                    # Uses Dynamixel SDK library
 
 # Control table address
+ADDR_MX_TORQUE_ENABLE      = 24               # Control table address is different in Dynamixel model
+ADDR_MX_GOAL_POSITION      = 30
+ADDR_MX_PRESENT_POSITION   = 36
 
-ADDR_TORQUE_ENABLE          = 24
-ADDR_GOAL_POSITION          = 30
-ADDR_PRESENT_POSITION       = 36
-DXL_MINIMUM_POSITION_VALUE  = -24,576         # Refer to the Minimum Position Limit of product eManual
-DXL_MAXIMUM_POSITION_VALUE  = 24,576      # Refer to the Maximum Position Limit of product eManual
-BAUDRATE                    = 57600
+# Protocol version
+PROTOCOL_VERSION            = 1.0               # See which protocol version is used in the Dynamixel
 
+# Default setting
+DXL_ID                      = 14                 # Dynamixel ID : 1
+BAUDRATE                    = 57600             # Dynamixel default baudrate : 57600
+DEVICENAME                  = '/dev/tty.usbserial-FT62AHPC'    # Check which port is being used on your controller
+                                                # ex) Windows: "COM1"   Linux: "/dev/ttyUSB0" Mac: "/dev/tty.usbserial-*"
 
-# DYNAMIXEL Protocol Version (1.0 / 2.0)
-# https://emanual.robotis.com/docs/en/dxl/protocol2/
-PROTOCOL_VERSION            = 2.0
+TORQUE_ENABLE               = 1                # Value for enabling the torque
+TORQUE_DISABLE              = 0                 # Value for disabling the torque
 
-# Factory default ID of all DYNAMIXEL is 1
-DXL_ID                      = 1
+#0 -> 360 for 0 -> 4095. So 11.375 units = 1 degree
+DXL_POSITION_VALUE  = round(4095/360 * 0)
 
-# Use the actual port assigned to the U2D2.
-# ex) Windows: "COM*", Linux: "/dev/ttyUSB*", Mac: "/dev/tty.usbserial-*"
-DEVICENAME                  = '/dev/ttyUSB0'
+DXL_MOVING_STATUS_THRESHOLD = 20                # Dynamixel moving status threshold
 
-TORQUE_ENABLE               = 1     # Value for enabling the torque
-TORQUE_DISABLE              = 0     # Value for disabling the torque
-DXL_MOVING_STATUS_THRESHOLD = 20    # Dynamixel moving status threshold
 
 index = 0
-dxl_goal_position = [DXL_MINIMUM_POSITION_VALUE, DXL_MAXIMUM_POSITION_VALUE]         # Goal position
-
+dxl_goal_position = [DXL_POSITION_VALUE]         # Goal position
+print('dxl goal position',dxl_goal_position)
 
 # Initialize PortHandler instance
 # Set the port path
@@ -87,7 +77,7 @@ else:
     quit()
 
 # Enable Dynamixel Torque
-dxl_comm_result, dxl_error = packetHandler.write1ByteTxRx(portHandler, DXL_ID, ADDR_TORQUE_ENABLE, TORQUE_ENABLE)
+dxl_comm_result, dxl_error = packetHandler.write1ByteTxRx(portHandler, DXL_ID, ADDR_MX_TORQUE_ENABLE, TORQUE_ENABLE)
 if dxl_comm_result != COMM_SUCCESS:
     print("%s" % packetHandler.getTxRxResult(dxl_comm_result))
 elif dxl_error != 0:
@@ -101,8 +91,7 @@ while 1:
         break
 
     # Write goal position
-    dxl_comm_result, dxl_error = packetHandler.write4ByteTxRx(portHandler, DXL_ID, ADDR_GOAL_POSITION, dxl_goal_position[index])
-    
+    dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID, ADDR_MX_GOAL_POSITION, dxl_goal_position[0])
     if dxl_comm_result != COMM_SUCCESS:
         print("%s" % packetHandler.getTxRxResult(dxl_comm_result))
     elif dxl_error != 0:
@@ -110,8 +99,7 @@ while 1:
 
     while 1:
         # Read present position
-        dxl_present_position, dxl_comm_result, dxl_error = packetHandler.read4ByteTxRx(portHandler, DXL_ID, ADDR_PRESENT_POSITION)
-        
+        dxl_present_position, dxl_comm_result, dxl_error = packetHandler.read2ByteTxRx(portHandler, DXL_ID, ADDR_MX_PRESENT_POSITION)
         if dxl_comm_result != COMM_SUCCESS:
             print("%s" % packetHandler.getTxRxResult(dxl_comm_result))
         elif dxl_error != 0:
@@ -122,15 +110,15 @@ while 1:
         if not abs(dxl_goal_position[index] - dxl_present_position) > DXL_MOVING_STATUS_THRESHOLD:
             break
 
-    # Change goal position
-    if index == 0:
-        index = 1
-    else:
-        index = 0
+    # Change goal position - can put all positions into list
+    #if index == 0:
+    #    index = 1
+    #else:
+    #    index = 0
 
 
 # Disable Dynamixel Torque
-dxl_comm_result, dxl_error = packetHandler.write1ByteTxRx(portHandler, DXL_ID, ADDR_TORQUE_ENABLE, TORQUE_DISABLE)
+dxl_comm_result, dxl_error = packetHandler.write1ByteTxRx(portHandler, DXL_ID, ADDR_MX_TORQUE_ENABLE, TORQUE_DISABLE)
 if dxl_comm_result != COMM_SUCCESS:
     print("%s" % packetHandler.getTxRxResult(dxl_comm_result))
 elif dxl_error != 0:
