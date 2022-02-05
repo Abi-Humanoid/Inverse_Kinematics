@@ -38,13 +38,13 @@ TORQUE_ENABLE               = 1                # Value for enabling the torque
 TORQUE_DISABLE              = 0                 # Value for disabling the torque
 
 #0 -> 360 for 0 -> 4095. So 11.375 units = 1 degree
-DXL_POSITION_VALUE  = round(4095/360 * 0)
+DXL_POSITION_VALUE1  = round(4095/360 * 90)
 
 DXL_MOVING_STATUS_THRESHOLD = 20                # Dynamixel moving status threshold
 
 
 index = 0
-dxl_goal_position = [DXL_POSITION_VALUE]         # Goal position
+dxl_goal_position = [DXL_POSITION_VALUE1]         # Goal position
 print('dxl goal position',dxl_goal_position)
 
 # Initialize PortHandler instance
