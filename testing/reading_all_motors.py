@@ -40,7 +40,7 @@ LEN_MX_MOVING = 1
 PROTOCOL_VERSION = 1.0
 
 # Default setting
-"""
+
 
 DXL2_ID = 2                 # Dynamixel#1 ID : 1
 DXL3_ID = 3                 # Dynamixel#1 ID : 2
@@ -48,7 +48,7 @@ DXL4_ID = 4
 DXL5_ID = 5
 DXL6_ID = 6
 DXL7_ID = 7
-"""
+
 DXL8_ID = 8
 DXL9_ID = 9            
 DXL10_ID = 10
@@ -107,7 +107,7 @@ else:
 
 #DXL2_ID, DXL3_ID, DXL4_ID, DXL5_ID, DXL6_ID, DXL7_ID, 
 
-Dynamixels = [DXL8_ID, DXL9_ID, DXL10_ID, DXL11_ID, DXL12_ID, DXL13_ID]
+Dynamixels = [DXL2_ID, DXL3_ID, DXL4_ID, DXL5_ID, DXL6_ID, DXL7_ID, DXL8_ID, DXL9_ID, DXL10_ID, DXL11_ID, DXL12_ID, DXL13_ID]
 # Enable Dynamixel#2-7 Torque
 for dynamixel in Dynamixels:
     dxl_comm_result, dxl_error = packetHandler.write1ByteTxRx(
@@ -201,9 +201,9 @@ while 1:
     
     print(dxl1_present_position)
 
+
+
     
-
-
     # Change goal position
     """
     if index == 0:
@@ -216,6 +216,8 @@ while 1:
 groupBulkRead.clearParam()
 
 # Disable Dynamixel#1 Torque
+
+Dynamixels = [DXL4_ID, DXL5_ID, DXL6_ID, DXL7_ID, DXL10_ID, DXL11_ID, DXL12_ID, DXL13_ID]
 for dynamixel in Dynamixels:
     dxl_comm_result, dxl_error = packetHandler.write1ByteTxRx(
         portHandler, dynamixel, ADDR_MX_TORQUE_ENABLE, TORQUE_DISABLE)
