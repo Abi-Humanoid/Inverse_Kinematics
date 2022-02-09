@@ -1,3 +1,4 @@
+#Reads the rotations of all MX motors that are held in position before script is run. It will lock torque of the upper motors (3 & 8) into position after first run
 
 import os
 
