@@ -1,3 +1,5 @@
+# Numerical Inverse Kinematics functions, including forward kinematics. Run via testing inverse kinematics script
+
 from numpy.lib.index_tricks import diag_indices
 from vpython import *
 import numpy as np
