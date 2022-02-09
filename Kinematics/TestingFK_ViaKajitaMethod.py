@@ -1,4 +1,5 @@
 #Testing SetupJoints script
+# This script prompts user to input rotation of each joint for forward kinematics, then runs simulation in vpython
 
 from vpython import *
 from time import *
