@@ -1,3 +1,5 @@
+#Inverse Kinematics functions, including forward kinemaitcs. Run from SetupJoints for Inverse Kinematics
+
 from vpython import *
 from time import *
 import random
