@@ -2,7 +2,7 @@ from vpython import *
 import numpy as np
 import math
 
-#Analytical method as opposed to numerical. 
+#Analytical method as opposed to numerical, follows kajita method.
 
 class SetupBiped:
     def __init__(self, number, a, q, pos, rm, b = None, parent = None):
