@@ -170,7 +170,8 @@ def main():
     #call function for each of the positions
     moving_components(Dynamixels,Start_position)
     print("Sitting_position")
-    time.sleep(1)
+    time.sleep(2)
+    
     moving_components(Dynamixels,Second_position)
     print("Sitting_position")
     time.sleep(2)
@@ -183,7 +184,7 @@ def main():
     moving_components(Dynamixels,Start_position)
     print("Sitting_position")
     time.sleep(2)
-   
+    
     #disconnect
     # Clear bulkread parameter storage
     groupBulkRead.clearParam()
