@@ -3,6 +3,7 @@
 from numpy.lib.index_tricks import diag_indices
 from vpython import *
 import numpy as np
+import math
 # Uses Kajita matlab script as basis
 #SetupBiped sets parameters of each joint. Child and sister empty as sister only relevant for top hip joint, and child not relevant for foot.
 # Number is joint number, a is joint axis, q is joint velocity
@@ -219,7 +220,10 @@ class SetupBiped:
                     joint.q = joint.q + dq2[idx] # changed to dq2
                     idx = idx + 1
 
+        for joint in joint_array:
+            print("Joint",joint.number)
 
+            print("Angle",joint.q * 180/(math.pi))
         
         print("Final joint position = ", self.pos)
 

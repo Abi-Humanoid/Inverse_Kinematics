@@ -91,7 +91,7 @@ target_pos = vector(50, 40, -30)
 target_rm = eye_rm
 
 j7.InverseKinematics(target_pos, target_rm)
-
+"""
 j2.draw()
 j3.draw()
 j4.draw()
@@ -99,7 +99,7 @@ j5.draw()
 j6.draw()
 j7.draw()
 
-"""
+
 j4.rm = [ex, ey, ez]
 j5.ForwardKinematics()
 

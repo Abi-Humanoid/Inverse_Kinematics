@@ -218,7 +218,7 @@ groupBulkRead.clearParam()
 
 # Disable Dynamixel#1 Torque
 
-Dynamixels = [DXL4_ID, DXL5_ID, DXL6_ID, DXL7_ID, DXL10_ID, DXL11_ID, DXL12_ID, DXL13_ID]
+Dynamixels2 = [DXL4_ID, DXL5_ID, DXL6_ID, DXL7_ID, DXL10_ID, DXL11_ID, DXL12_ID, DXL13_ID]
 for dynamixel in Dynamixels:
     dxl_comm_result, dxl_error = packetHandler.write1ByteTxRx(
         portHandler, dynamixel, ADDR_MX_TORQUE_ENABLE, TORQUE_DISABLE)
