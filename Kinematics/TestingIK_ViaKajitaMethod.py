@@ -6,7 +6,7 @@ import random
 import numpy as np
 import math
 
-#CHANGE FROM TO CORRECT FILE FOR FK // IK
+#CHANGE TO CORRECT FILE FOR FK // IK
 from SetupJoints_InverseKinematics import SetupBiped
 
 # setting a, joint axis vector (roll, pitch, yaw)
@@ -21,19 +21,18 @@ eye_rm = [ex, ey, ez] #x, y, z
 
 #joint 1 is body, increasing joint no = down right leg, j7 is foot
 #Axis as defined in VPython setup
-#Need to make b a parameter from initial setup
-
+#           number, a, q, pos,              rm,     b = None,       parent = None)
 j1 = SetupBiped(1, UY, 0, vector(67, 86, 0), eye_rm )
-j2 = SetupBiped(2, UY, 0, vector(58, 86, 0), eye_rm, vector(-9,0,0),  j1)
-j3 = SetupBiped(3, UZ, 0, vector(58, 78, 0),  eye_rm, vector(0, 78-86,0),j2)
+j2 = SetupBiped(2, UZ, 0, vector(58, 86, 0), eye_rm, vector(-9,0,0),  j1)
+j3 = SetupBiped(3, UY, 0, vector(58, 78, 0),  eye_rm, vector(0, 78-86,0),j2)
 j4 = SetupBiped(4, UX, 0, vector(50, 78, 0), eye_rm, vector(50-58,0,0), j3)
 j5 = SetupBiped(5, UX, 0, vector(50, 44, 0),  eye_rm,vector(0,44-78,0), j4)
 j6 = SetupBiped(6, UX, 0, vector(50, 19, 0),  eye_rm, vector(0, 19-44,0),j5)
 j7 = SetupBiped(7, UZ, 0, vector(50, 0, 0),  eye_rm, vector(0, -19,0),j6)
 
 #Left leg going down, j13 is foot
-j8 = SetupBiped(8, UY, 0, vector(76, 86, 0), eye_rm, vector(76-67,0,0),j1)
-j9 = SetupBiped(9, UZ, 0, vector(76, 78, 0), eye_rm, vector(0,78-86,0),j8)
+j8 = SetupBiped(8, UZ, 0, vector(76, 86, 0), eye_rm, vector(76-67,0,0),j1)
+j9 = SetupBiped(9, UY, 0, vector(76, 78, 0), eye_rm, vector(0,78-86,0),j8)
 j10 = SetupBiped(10, UX, 0, vector(84, 78, 0), eye_rm, vector(84-76,0,0), j9)
 j11 = SetupBiped(11, UX, 0, vector(84, 44, 0), eye_rm, vector(0,44-78,0), j10)
 j12 = SetupBiped(12, UX, 0, vector(84, 19, 0), eye_rm, vector(0,19-44,0),j11)
