@@ -1,3 +1,4 @@
+# This script uses read in positions to work - need to update if motors have been re-assembled
 import os
 import time
 
@@ -51,7 +52,7 @@ DXL11_ID = 11
 DXL12_ID = 12
 DXL13_ID = 13 
 BAUDRATE                    = 57600             # Dynamixel default baudrate : 57600
-DEVICENAME                  = '/dev/tty.usbserial-FT62AHPC'    # Check which port is being used on your controller
+DEVICENAME                  = '/dev/tty.usbserial-FT62AKQ4'    # Check which port is being used on your controller
                                                 # ex) Windows: "COM1"   Linux: "/dev/ttyUSB0" Mac: "/dev/tty.usbserial-*"
 
 TORQUE_ENABLE               = 1                 # Value for enabling the torque
@@ -195,19 +196,7 @@ def main():
     time.sleep(1.5)
     moving_components(Dynamixels,Start_position)
     print("START")
-    time.sleep(0.5)
-    moving_components(Dynamixels,Second_position)
-    print("SECOND")
-    time.sleep(1.5)
-    moving_components(Dynamixels,Start_position)
-    print("START")
-    time.sleep(0.5)
-    moving_components(Dynamixels,Third_position)
-    print("THIRD")
-    time.sleep(1.5)
-    moving_components(Dynamixels,Start_position)
-    print("START")
-    time.sleep(1)
+    
     
     #disconnect
     # Clear bulkread parameter storage
