@@ -65,6 +65,7 @@ DXL_MOVING_STATUS_THRESHOLD = 20                # Dynamixel moving status thresh
 index = 0
       # Goal position
 
+#arrays of all positions
 Start_position = [1043, 3604, 2121, 1482, 1639, 3636, 2482, 2593, 2037, 1972, 3036, 3609]
 Second_position = [1030, 3602, 1755, 1817, 1534, 3639, 2476, 2593, 1356, 2671, 3059, 3609]
 Third_position = [1032, 3598, 2632, 2199, 1623, 3639, 2491, 2591, 2339, 2405, 3178, 3607]
@@ -202,6 +203,8 @@ def main():
     # Clear bulkread parameter storage
     groupBulkRead.clearParam()
     #DXL2_ID, DXL3_ID, DXL4_ID, DXL5_ID, DXL6_ID, DXL7_ID, 
+    # 'Dynamixels' array does not contain IDs 2 and 3 becuase we don't want to clear it. 
+    # Add 2 and 3 into array here if you want them unlocked.
     Dynamixels = [DXL4_ID, DXL5_ID, DXL6_ID, DXL7_ID, DXL10_ID, DXL11_ID, DXL12_ID, DXL13_ID]
     for dynamixel in Dynamixels:
         dxl_comm_result, dxl_error = packetHandler.write1ByteTxRx(
