@@ -42,20 +42,18 @@ PROTOCOL_VERSION = 1.0
 
 # Default setting
 
+# Dynamixel#1 ID : 1
+# Dynamixel#1 ID : 2
+# Left arm
+DXL19_ID = 19        
+DXL20_ID = 20
+DXL24_ID = 24
+#Right arm
+DXL21_ID = 21
+DXL22_ID = 22
+DXL23_ID = 23
 
-DXL2_ID = 2                 # Dynamixel#1 ID : 1
-DXL3_ID = 3                 # Dynamixel#1 ID : 2
-DXL4_ID = 4
-DXL5_ID = 5
-DXL6_ID = 6
-DXL7_ID = 7
 
-DXL8_ID = 8
-DXL9_ID = 9            
-DXL10_ID = 10
-DXL11_ID = 11
-DXL12_ID = 12
-DXL13_ID = 13
 BAUDRATE = 57600             # Dynamixel default baudrate : 57600
 # Check which port is being used on your controller
 DEVICENAME = '/dev/tty.usbserial-FT6RW7PK'
@@ -108,7 +106,7 @@ else:
 
 #DXL2_ID, DXL3_ID, DXL4_ID, DXL5_ID, DXL6_ID, DXL7_ID, 
 
-Dynamixels = [DXL2_ID, DXL3_ID, DXL4_ID, DXL5_ID, DXL6_ID, DXL7_ID, DXL8_ID, DXL9_ID, DXL10_ID, DXL11_ID, DXL12_ID, DXL13_ID]
+Dynamixels = [DXL19_ID, DXL20_ID, DXL24_ID, DXL21_ID, DXL22_ID, DXL23_ID]
 # Enable Dynamixel#2-7 Torque
 for dynamixel in Dynamixels:
     dxl_comm_result, dxl_error = packetHandler.write1ByteTxRx(
@@ -216,9 +214,9 @@ while 1:
 # Clear bulkread parameter storage
 groupBulkRead.clearParam()
 
-# Disable Dynamixel#1 Torque
+# Disable Dynamixel#1 Torque, ie. DONT lock. Exclude from Dynamixels2 if want to lock
 
-Dynamixels2 = [DXL4_ID, DXL5_ID, DXL6_ID, DXL7_ID, DXL10_ID, DXL11_ID, DXL12_ID, DXL13_ID]
+Dynamixels2 = [DXL19_ID, DXL20_ID, DXL24_ID, DXL21_ID, DXL22_ID, DXL23_ID]
 for dynamixel in Dynamixels:
     dxl_comm_result, dxl_error = packetHandler.write1ByteTxRx(
         portHandler, dynamixel, ADDR_MX_TORQUE_ENABLE, TORQUE_DISABLE)
