@@ -34,7 +34,7 @@ PROTOCOL_VERSION            = 1.0
 DXL1_ID                     = 1                 # Dynamixel#1 ID : 1
 DXL2_ID                     = 2                 # Dynamixel#1 ID : 2
 
-DEVICENAME                  = '/dev/tty.usbserial-FT62AHPC'
+DEVICENAME                  = '/dev/tty.usbserial-FT62AKQ4'
 
 # MORE HOUSEKEEPING
 TORQUE_ENABLE               = 1                 # Value for enabling the torque
@@ -89,4 +89,4 @@ def write_goal_pos(DXL_ID,POS):
     disable_torque(DXL_ID)
 
 if __name__ == "__main__":
-    pass
+    disable_torque(18)
