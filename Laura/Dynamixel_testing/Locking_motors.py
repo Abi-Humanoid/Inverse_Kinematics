@@ -2,6 +2,8 @@
 import os
 import time
 
+from Laura.Dynamixel_testing.moving_arms import Second_pos
+
 
 if os.name == 'nt':
     import msvcrt
@@ -129,9 +131,6 @@ def moving_components(dynamixels,positions):
         # Write goal velocity
         
     
-
-
-
 def main():
     #DXL2_ID, DXL3_ID, DXL4_ID, DXL5_ID, DXL6_ID, DXL7_ID, 
     Dynamixels =  [DXL19_ID, DXL20_ID, DXL24_ID, DXL21_ID, DXL22_ID, DXL23_ID]
@@ -164,13 +163,8 @@ def main():
         if dxl_getdata_result != True:
             print("[ID:%03d] groupBulkRead getdata failed" % dynamixel)
             quit()
-    
-    #call function for each of the positions
-    moving_components(Dynamixels,Start_position)
-    print("START")
-    time.sleep(1)
-    
-    
+
+
     
     #disconnect
     # Clear bulkread parameter storage
