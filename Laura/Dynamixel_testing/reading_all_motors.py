@@ -42,20 +42,15 @@ PROTOCOL_VERSION = 1.0
 
 # Default setting
 
+# Left arm
+DXL19_ID = 19        
+DXL20_ID = 20
+DXL24_ID = 24
+#Right arm
+DXL21_ID = 21
+DXL22_ID = 22
+DXL23_ID = 23
 
-DXL2_ID = 2                 # Dynamixel#1 ID : 1
-DXL3_ID = 3                 # Dynamixel#1 ID : 2
-DXL4_ID = 4
-DXL5_ID = 5
-DXL6_ID = 6
-DXL7_ID = 7
-
-DXL8_ID = 8
-DXL9_ID = 9            
-DXL10_ID = 10
-DXL11_ID = 11
-DXL12_ID = 12
-DXL13_ID = 13
 BAUDRATE = 57600             # Dynamixel default baudrate : 57600
 # Check which port is being used on your controller
 DEVICENAME = '/dev/tty.usbserial-FT6RW7PK'

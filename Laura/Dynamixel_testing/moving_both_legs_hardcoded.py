@@ -39,14 +39,19 @@ PROTOCOL_VERSION            = 1.0               # See which protocol version is 
 
 # Default setting
 
-# Left arm
-DXL19_ID = 19        
-DXL20_ID = 20
-DXL24_ID = 24
-#Right arm
-DXL21_ID = 21
-DXL22_ID = 22
-DXL23_ID = 23
+DXL2_ID = 2                 # Dynamixel#1 ID : 1
+DXL3_ID = 3                 # Dynamixel#1 ID : 2
+DXL4_ID = 4
+DXL5_ID = 5
+DXL6_ID = 6
+DXL7_ID = 7
+
+DXL8_ID = 8
+DXL9_ID = 9            
+DXL10_ID = 10
+DXL11_ID = 11
+DXL12_ID = 12
+DXL13_ID = 13
 
 BAUDRATE                    = 57600             # Dynamixel default baudrate : 57600
 DEVICENAME                  = '/dev/tty.usbserial-FT62AKQ4'    # Check which port is being used on your controller
@@ -134,7 +139,7 @@ def moving_components(dynamixels,positions):
 
 def main():
     #DXL2_ID, DXL3_ID, DXL4_ID, DXL5_ID, DXL6_ID, DXL7_ID, 
-    Dynamixels = [DXL19_ID, DXL20_ID, DXL24_ID, DXL21_ID, DXL22_ID, DXL23_ID]
+    Dynamixels = [DXL2_ID, DXL3_ID, DXL4_ID, DXL5_ID, DXL6_ID, DXL7_ID, DXL8_ID, DXL9_ID, DXL10_ID, DXL11_ID, DXL12_ID, DXL13_ID]
     # Enable Dynamixel#2-7 Torque
     for dynamixel in Dynamixels:
         dxl_comm_result, dxl_error = packetHandler.write1ByteTxRx(
@@ -175,14 +180,14 @@ def main():
     #DXL2_ID, DXL3_ID, DXL4_ID, DXL5_ID, DXL6_ID, DXL7_ID, 
     # 'Dynamixels' array does not contain IDs 2 and 3 becuase we don't want to clear it. 
     # Add 2 and 3 into array here if you want them unlocked.
-    #Dynamixels = [DXL19_ID, DXL20_ID, DXL24_ID, DXL21_ID, DXL22_ID, DXL23_ID]
-    #for dynamixel in Dynamixels:
-    #    dxl_comm_result, dxl_error = packetHandler.write1ByteTxRx(
-    #        portHandler, dynamixel, ADDR_MX_TORQUE_ENABLE, TORQUE_DISABLE)
-    #    if dxl_comm_result != COMM_SUCCESS:
-    #        print("%s" % packetHandler.getTxRxResult(dxl_comm_result))
-    #    elif dxl_error != 0:
-    #        print("%s" % packetHandler.getRxPacketError(dxl_error))
+    Dynamixels = [DXL4_ID, DXL5_ID, DXL6_ID, DXL7_ID, DXL8_ID, DXL9_ID, DXL10_ID, DXL11_ID, DXL12_ID, DXL13_ID]
+    for dynamixel in Dynamixels:
+        dxl_comm_result, dxl_error = packetHandler.write1ByteTxRx(
+            portHandler, dynamixel, ADDR_MX_TORQUE_ENABLE, TORQUE_DISABLE)
+        if dxl_comm_result != COMM_SUCCESS:
+            print("%s" % packetHandler.getTxRxResult(dxl_comm_result))
+        elif dxl_error != 0:
+            print("%s" % packetHandler.getRxPacketError(dxl_error))
 
     # Close port
     portHandler.closePort()
