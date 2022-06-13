@@ -65,7 +65,7 @@ index = 0
 #arrays of all positions
 Start_position = [2058, 2119, 2076, 1551, 1051, 2076]
 Second_pos = [617, 2641, 2035, 2798, 733, 2085]
-Third_pos = [1256, 2518, 2662, 2337, 602, 1299]
+Third_pos = [692, 2487, 2653, 2904, 555, 1506]
 
 
 # Initialize PortHandler instance
@@ -104,16 +104,19 @@ else:
 def moving_components(positions): 
 #while 1:
     dynamixels =[DXL19_ID, DXL20_ID, DXL24_ID, DXL21_ID, DXL22_ID, DXL23_ID]
-    dynamixels_slower = [DXL24_ID, DXL23_ID]
-    dynamixels_faster = [DXL19_ID, DXL20_ID, DXL21_ID, DXL22_ID]
+    dynamixels_slower = [DXL22_ID, DXL20_ID]
+    dynamixels_medium = [DXL24_ID, DXL23_ID]
+    dynamixels_faster = [DXL19_ID, DXL21_ID]
 
     index=0
     # Write Dynamixel#1 goal position
     for dynamixel in dynamixels:
         if dynamixel in dynamixels_slower:
-            dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, dynamixel, ADDR_DXL_GOAL_SPEED, 20)
+            dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, dynamixel, ADDR_DXL_GOAL_SPEED, 85)
+        elif dynamixel in dynamixels_medium:
+            dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, dynamixel, ADDR_DXL_GOAL_SPEED, 95)
         elif dynamixel in dynamixels_faster:
-            dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, dynamixel, ADDR_DXL_GOAL_SPEED, 35)
+            dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, dynamixel, ADDR_DXL_GOAL_SPEED, 100)
 
         
         if (dxl_comm_result != COMM_SUCCESS):
@@ -172,19 +175,15 @@ def main():
         #call function for each of the positions
     moving_components(Start_position)
     print("START")
-    time.sleep(3)
+    time.sleep(1)
     moving_components(Second_pos)
+    time.sleep(2)
     print("Second")
-    time.sleep(5)
     moving_components(Third_pos)
-    print("Third")
-    time.sleep(5)
+    time.sleep(3)
     moving_components(Second_pos)
-    print("Third")
-    time.sleep(3)
+    time.sleep(1)
     moving_components(Start_position)
-    print("Second")
-    time.sleep(3)
     
     groupBulkRead.clearParam()
 
