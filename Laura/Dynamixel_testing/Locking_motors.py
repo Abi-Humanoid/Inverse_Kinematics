@@ -46,11 +46,11 @@ DXL5_ID = 5
 DXL6_ID = 6
 DXL7_ID = 7
 DXL8_ID = 8
-DXL9_ID = 9            
+DXL9_ID = 9
 DXL10_ID = 10
 DXL11_ID = 11
 DXL12_ID = 12
-DXL13_ID = 13 
+DXL13_ID = 13
 
 BAUDRATE                    = 57600             # Dynamixel default baudrate : 57600
 DEVICENAME                  = '/dev/tty.usbserial-FT62AKQ4'    # Check which port is being used on your controller
@@ -103,7 +103,7 @@ else:
     quit()
 
 
-def moving_components(dynamixels,positions): 
+def moving_components(dynamixels,positions):
 #while 1:
     #print("Press any key to continue! (or press ESC to quit!)")
     """
@@ -118,7 +118,7 @@ def moving_components(dynamixels,positions):
             print("%s\n", packetHandler.getTxRxResult(dxl_comm_result))
         elif (dxl_error != 0):
             print("%s\n", packetHandler.getRxPacketError(dxl_error))
-        
+
         dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, dynamixel, ADDR_MX_GOAL_POSITION, positions[index])
         print('dynamixel',dynamixel)
         print('position',positions[index])
@@ -132,13 +132,13 @@ def moving_components(dynamixels,positions):
         #    if not (abs(positions[index] - dxl1_present_position) > DXL_MOVING_STATUS_THRESHOLD):
         #        break
         # Write goal velocity
-        
-    
+
+
 
 
 
 def main():
-    #DXL2_ID, DXL3_ID, DXL4_ID, DXL5_ID, DXL6_ID, DXL7_ID, 
+    #DXL2_ID, DXL3_ID, DXL4_ID, DXL5_ID, DXL6_ID, DXL7_ID,
     Dynamixels = [DXL2_ID, DXL3_ID, DXL4_ID, DXL5_ID, DXL6_ID, DXL7_ID, DXL8_ID, DXL9_ID, DXL10_ID, DXL11_ID, DXL12_ID, DXL13_ID]
     # Enable Dynamixel#2-7 Torque
     for dynamixel in Dynamixels:
@@ -152,8 +152,8 @@ def main():
         else:
             print("Dynamixel#%d has been successfully connected" % dynamixel)
     # Write Dynamixel#1 goal position
-    
-        
+
+
     for dynamixel in Dynamixels:
         # Add parameter storage for Dynamixel#1 moving position
         dxl_addparam_result = groupBulkRead.addParam(
@@ -169,7 +169,7 @@ def main():
         if dxl_getdata_result != True:
             print("[ID:%03d] groupBulkRead getdata failed" % dynamixel)
             quit()
-    
+
     #call function for each of the positions
     moving_components(Dynamixels,Start_position)
     print("START")
@@ -179,7 +179,7 @@ def main():
     time.sleep(1.5)
     moving_components(Dynamixels,Start_position)
     print("START")
-    
+
     time.sleep(0.5)
     moving_components(Dynamixels,Third_position)
     print("THIRD")
@@ -198,13 +198,13 @@ def main():
     time.sleep(1.5)
     moving_components(Dynamixels,Start_position)
     print("START")
-    
-    
+
+
     #disconnect
     # Clear bulkread parameter storage
     groupBulkRead.clearParam()
-    #DXL2_ID, DXL3_ID, DXL4_ID, DXL5_ID, DXL6_ID, DXL7_ID, 
-    # 'Dynamixels' array does not contain IDs 2 and 3 becuase we don't want to clear it. 
+    #DXL2_ID, DXL3_ID, DXL4_ID, DXL5_ID, DXL6_ID, DXL7_ID,
+    # 'Dynamixels' array does not contain IDs 2 and 3 becuase we don't want to clear it.
     # Add 2 and 3 into array here if you want them unlocked.
     Dynamixels = [DXL4_ID, DXL5_ID, DXL6_ID, DXL7_ID, DXL10_ID, DXL11_ID, DXL12_ID, DXL13_ID]
     for dynamixel in Dynamixels:
