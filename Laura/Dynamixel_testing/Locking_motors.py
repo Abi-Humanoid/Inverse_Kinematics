@@ -39,21 +39,17 @@ PROTOCOL_VERSION            = 1.0               # See which protocol version is 
 
 # Default setting
 
-DXL2_ID = 2                 # Dynamixel#1 ID : 1
-DXL3_ID = 3                 # Dynamixel#1 ID : 2
-DXL4_ID = 4
-DXL5_ID = 5
-DXL6_ID = 6
-DXL7_ID = 7
-DXL8_ID = 8
-DXL9_ID = 9            
-DXL10_ID = 10
-DXL11_ID = 11
-DXL12_ID = 12
-DXL13_ID = 13 
+# Left arm
+DXL19_ID = 19        
+DXL20_ID = 20
+DXL24_ID = 24
+#Right arm
+DXL21_ID = 21
+DXL22_ID = 22
+DXL23_ID = 23
 
 BAUDRATE                    = 57600             # Dynamixel default baudrate : 57600
-DEVICENAME                  = '/dev/tty.usbserial-FT62AKQ4'    # Check which port is being used on your controller
+DEVICENAME                  = '/dev/tty.usbserial-FT6RW7PK'    # Check which port is being used on your controller
                                                 # ex) Windows: "COM1"   Linux: "/dev/ttyUSB0" Mac: "/dev/tty.usbserial-*"
 
 TORQUE_ENABLE               = 1                 # Value for enabling the torque
@@ -67,9 +63,8 @@ index = 0
       # Goal position
 
 #arrays of all positions
-Start_position = [1043, 3604, 2121, 1482, 1639, 3636, 2482, 2593, 2037, 1972, 3036, 3609]
-Second_position = [1030, 3602, 1755, 1817, 1534, 3639, 2476, 2593, 1356, 2671, 3059, 3609]
-Third_position = [1032, 3598, 2632, 2199, 1623, 3639, 2491, 2591, 2339, 2405, 3178, 3607]
+Start_position = [2085, 2041, 1988, 1518, 1041, 63]
+
 # Initialize PortHandler instance
 # Set the port path
 # Get methods and members of PortHandlerLinux or PortHandlerWindows
@@ -139,7 +134,7 @@ def moving_components(dynamixels,positions):
 
 def main():
     #DXL2_ID, DXL3_ID, DXL4_ID, DXL5_ID, DXL6_ID, DXL7_ID, 
-    Dynamixels = [DXL2_ID, DXL3_ID, DXL4_ID, DXL5_ID, DXL6_ID, DXL7_ID, DXL8_ID, DXL9_ID, DXL10_ID, DXL11_ID, DXL12_ID, DXL13_ID]
+    Dynamixels =  [DXL19_ID, DXL20_ID, DXL24_ID, DXL21_ID, DXL22_ID, DXL23_ID]
     # Enable Dynamixel#2-7 Torque
     for dynamixel in Dynamixels:
         dxl_comm_result, dxl_error = packetHandler.write1ByteTxRx(
@@ -174,30 +169,7 @@ def main():
     moving_components(Dynamixels,Start_position)
     print("START")
     time.sleep(1)
-    moving_components(Dynamixels,Second_position)
-    print("SECOND")
-    time.sleep(1.5)
-    moving_components(Dynamixels,Start_position)
-    print("START")
     
-    time.sleep(0.5)
-    moving_components(Dynamixels,Third_position)
-    print("THIRD")
-    time.sleep(1.5)
-    moving_components(Dynamixels,Start_position)
-    print("START")
-    time.sleep(0.5)
-    moving_components(Dynamixels,Second_position)
-    print("SECOND")
-    time.sleep(1.5)
-    moving_components(Dynamixels,Start_position)
-    print("START")
-    time.sleep(0.5)
-    moving_components(Dynamixels,Third_position)
-    print("THIRD")
-    time.sleep(1.5)
-    moving_components(Dynamixels,Start_position)
-    print("START")
     
     
     #disconnect
@@ -206,14 +178,14 @@ def main():
     #DXL2_ID, DXL3_ID, DXL4_ID, DXL5_ID, DXL6_ID, DXL7_ID, 
     # 'Dynamixels' array does not contain IDs 2 and 3 becuase we don't want to clear it. 
     # Add 2 and 3 into array here if you want them unlocked.
-    Dynamixels = [DXL4_ID, DXL5_ID, DXL6_ID, DXL7_ID, DXL10_ID, DXL11_ID, DXL12_ID, DXL13_ID]
-    for dynamixel in Dynamixels:
-        dxl_comm_result, dxl_error = packetHandler.write1ByteTxRx(
-            portHandler, dynamixel, ADDR_MX_TORQUE_ENABLE, TORQUE_DISABLE)
-        if dxl_comm_result != COMM_SUCCESS:
-            print("%s" % packetHandler.getTxRxResult(dxl_comm_result))
-        elif dxl_error != 0:
-            print("%s" % packetHandler.getRxPacketError(dxl_error))
+    #Dynamixels =  [DXL19_ID, DXL20_ID, DXL24_ID, DXL21_ID, DXL22_ID, DXL23_ID]
+    #for dynamixel in Dynamixels:
+    #    dxl_comm_result, dxl_error = packetHandler.write1ByteTxRx(
+    #        portHandler, dynamixel, ADDR_MX_TORQUE_ENABLE, TORQUE_DISABLE)
+    #    if dxl_comm_result != COMM_SUCCESS:
+    #        print("%s" % packetHandler.getTxRxResult(dxl_comm_result))
+    #    elif dxl_error != 0:
+    #        print("%s" % packetHandler.getRxPacketError(dxl_error))
 
     # Close port
     portHandler.closePort()
