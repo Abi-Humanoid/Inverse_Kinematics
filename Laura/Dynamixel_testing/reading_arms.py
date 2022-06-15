@@ -1,4 +1,3 @@
-#Reads the rotations of all MX motors that are held in position before script is run. It will lock torque of the upper motors (3 & 8) into position after first run
 
 import os
 
@@ -41,9 +40,9 @@ LEN_MX_MOVING = 1
 PROTOCOL_VERSION = 1.0
 
 # Default setting
-
-# Dynamixel#1 ID : 1
-# Dynamixel#1 ID : 2
+# Torso
+DXL17_ID = 17       
+DXL18_ID = 18
 # Left arm
 DXL19_ID = 19        
 DXL20_ID = 20
@@ -52,6 +51,7 @@ DXL24_ID = 24
 DXL21_ID = 21
 DXL22_ID = 22
 DXL23_ID = 23
+
 
 
 BAUDRATE = 57600             # Dynamixel default baudrate : 57600
@@ -214,10 +214,11 @@ while 1:
 # Clear bulkread parameter storage
 groupBulkRead.clearParam()
 
-# Disable Dynamixel#1 Torque, ie. DONT lock. Exclude from Dynamixels2 if want to lock
-
+# Disable Dynamixel#1 Torque
+# not including 8 and 2, and 3 and 9
 Dynamixels2 = [DXL19_ID, DXL20_ID, DXL24_ID, DXL21_ID, DXL22_ID, DXL23_ID]
-for dynamixel in Dynamixels:
+
+for dynamixel in Dynamixels2:
     dxl_comm_result, dxl_error = packetHandler.write1ByteTxRx(
         portHandler, dynamixel, ADDR_MX_TORQUE_ENABLE, TORQUE_DISABLE)
     if dxl_comm_result != COMM_SUCCESS:

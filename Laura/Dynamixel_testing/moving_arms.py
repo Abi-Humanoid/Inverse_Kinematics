@@ -62,11 +62,8 @@ DXL_MOVING_STATUS_THRESHOLD = 20                # Dynamixel moving status thresh
 index = 0
       # Goal position
 
-#arrays of all positions
-Start_position = [2058, 2119, 2076, 1551, 1051, 2076]
-Second_pos = [617, 2641, 2035, 2798, 733, 2085]
-Third_pos = [692, 2487, 2653, 2904, 555, 1506]
-
+# arrays of all positions
+Start_position = [746, 2316, 2413, 2795, 771, 1525]
 
 # Initialize PortHandler instance
 # Set the port path
@@ -132,11 +129,7 @@ def moving_components(positions):
         elif dxl_error != 0:
             print("%s" % packetHandler.getRxPacketError(dxl_error))
         index+=1
-        #while 1:
-        #    dxl1_present_position = groupBulkRead.getData(dynamixel, ADDR_MX_PRESENT_POSITION, LEN_MX_PRESENT_POSITION)
-        #    if not (abs(positions[index] - dxl1_present_position) > DXL_MOVING_STATUS_THRESHOLD):
-        #        break
-        # Write goal velocity
+        
     
 
 def main():
@@ -176,14 +169,7 @@ def main():
     moving_components(Start_position)
     print("START")
     time.sleep(1)
-    moving_components(Second_pos)
-    time.sleep(2)
-    print("Second")
-    moving_components(Third_pos)
-    time.sleep(3)
-    moving_components(Second_pos)
-    time.sleep(1)
-    moving_components(Start_position)
+    
     
     groupBulkRead.clearParam()
 
