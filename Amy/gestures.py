@@ -1,15 +1,5 @@
 # Experimenting with an all-in-one reading/setting file for controlling Abis movements
 # Amy Zuell
-#
-# - Kill switch
-# - time.sleep() using loop to check goal position
-
-# - Hardcode sit/stand/locking unused motors
-
-# - Current pos vs moving
-# - 360 deg joints
-
-
 
 # Initialise operating systems
 import os
@@ -95,7 +85,7 @@ def addParamater(motors):
     for dynamixel in motors:
         dxl_addparam_result = groupBulkRead.addParam(dynamixel, ID.ADDR_PRESENT_POSITION, ID.LEN_PRESENT_POSITION)
         #dxl_addparam_result = groupBulkRead.addParam(dynamixel, ID.ADDR_MOVING, ID.LEN_MOVING)
-        print(' # %s Added to bulk read' % ID.ID_TO_STR_DICT[dynamixel].ljust(18))
+        print(' # %s Connected' % ID.ID_TO_STR_DICT[dynamixel].ljust(18))
         if dxl_addparam_result != True:
             print("[%s] groupBulkRead addparam failed first" % ID.ID_TO_STR_DICT[dynamixel])
             quit()
@@ -106,8 +96,6 @@ def readPosition(motors):
     dxl_comm_result = groupBulkRead.txRxPacket()
     if dxl_comm_result != COMM_SUCCESS:
         print("%s" % packetHandler.getTxRxResult(dxl_comm_result))
-
-    position = []
     
     for dynamixel in motors:
         # Check if groupbulkread data is available
@@ -117,10 +105,6 @@ def readPosition(motors):
             quit()
         dxl_present_position = groupBulkRead.getData(dynamixel, ID.ADDR_PRESENT_POSITION, ID.LEN_PRESENT_POSITION)
         print(" # {} : {}".format(ID.ID_TO_STR_DICT[dynamixel].ljust(18), dxl_present_position))
-        position.append(dxl_present_position)
-    
-    print(position)
-
 
 # Store the current position of the motors
 def storePosition(motors):
@@ -156,12 +140,92 @@ def setPosition(motors, motors_position):
         dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, dynamixel, ID.ADDR_GOAL_POSITION, motors_position[num_motor])
         num_motor += 1
 
+def setSpeed(motors, motors_speed):
+    num_motor = 0
+    for dynamixel in motors:
+        dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, dynamixel, ID.ADDR_MOVING_SPEED, motors_speed[num_motor])
+        num_motor += 1
+
+def actionArmBySide(motors):
+    goal = [2010, 2030, 1997, 1586, 1035, 2074]
+
+    SPEED_SHOULDER  = 85
+    SPEED_ELBOW     = 95
+    SPEED_COLLAR    = 100
+
+    num_motor = 0
+    for dynamixel in motors:
+        if dynamixel in ID.SHOULDER:
+            dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, dynamixel, ID.ADDR_MOVING_SPEED, SPEED_SHOULDER)
+        if dynamixel in ID.ELBOW:
+            dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, dynamixel, ID.ADDR_MOVING_SPEED, SPEED_ELBOW)
+        if dynamixel in ID.COLLAR:
+            dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, dynamixel, ID.ADDR_MOVING_SPEED, SPEED_COLLAR)
+
+        dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, dynamixel, ID.ADDR_GOAL_POSITION, goal[num_motor])
+        num_motor += 1
 
 
+
+def actionHug(motors):
+    goal = [746, 2316, 2413, 2795, 771, 1525]
+
+    SPEED_SHOULDER  = 85
+    SPEED_ELBOW     = 95
+    SPEED_COLLAR    = 100
+
+    num_motor = 0
+    for dynamixel in motors:
+        if dynamixel in ID.SHOULDER:
+            dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, dynamixel, ID.ADDR_MOVING_SPEED, SPEED_SHOULDER)
+        if dynamixel in ID.ELBOW:
+            dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, dynamixel, ID.ADDR_MOVING_SPEED, SPEED_ELBOW)
+        if dynamixel in ID.COLLAR:
+            dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, dynamixel, ID.ADDR_MOVING_SPEED, SPEED_COLLAR)
+
+        dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, dynamixel, ID.ADDR_GOAL_POSITION, goal[num_motor])
+        num_motor += 1
+
+#def actionWave(motors):
+    #motors_speed = [80 for dynamixel in motors]
+
+    #setSpeed(motors, motors_speed)
+    #print("first move")
+    #setPosition(motors, [1910, 2153, 1990, 1669, 4034, 1074])
+    #time.sleep(2)
+    #print("second move")
+    #setPosition(motors, [1922, 2154, 1990, 3570, 3821, 1350])
+    #time.sleep(2)
+    #print("third move")
+    #setPosition(motors, [1923, 2153, 1991, 3570, 3824, 656])
+    #time.sleep(1)
+    #setPosition(motors, [2004, 2102, 1948, 3616, 4032, 868])
+    #time.sleep(1)
+    #setPosition(motors, [2006, 2155, 1948, 3511, 4086, 1568])
+
+def actionHandshake(motors):
+    motors_speed = [90 for dynamixel in motors]
+
+    pos_down = [2152, 2062, 2002, 2314, 808, 1726]
+    pos_up = [2152, 2063, 2002, 2582, 897, 1804]
+
+    setSpeed(motors, motors_speed)
+    setPosition(motors, pos_down)
+    time.sleep(1.5)
+    setPosition(motors, pos_up)
+    time.sleep(0.5)
+    setPosition(motors, pos_down)
+    time.sleep(0.5)
+    setPosition(motors, pos_up)
+    time.sleep(0.5)
+    setPosition(motors, pos_down)
+    time.sleep(0.5)
+    setPosition(motors, pos_up)
+    
 
 # Main script
 
-print("**************** MOVING ABI ****************")
+print("**************** GESTURING ABI ****************")
        
 # Initialize PortHandler and open ports
 print("Establishing connection to Abi via serial communication")
@@ -178,11 +242,12 @@ groupBulkRead = GroupBulkRead(portHandler, packetHandler)
 # Set limbs
 ABI_MODE = {'1': ID.ARMS, '2': ID.LEGS, '3': ID.ABI}
 ABI_MODE_TO_STR = {'1': "Arms", '2': "Legs", '3': 'Full Body'}
-print("[Modes]\n 1: Arms\n 2: Legs\n 3: Full Body")
+print("[Modes]\n 1: Arms")
+#\n 2: Legs\n 3: Full Body")
 abiMode = input("Enter Abi mode: ")
 motors = ABI_MODE[abiMode]
-addParamater(motors)
 setTorque(motors, TORQUE_DISABLE)
+addParamater(motors)
     
 print("Press any key to continue\n") 
 
@@ -194,40 +259,45 @@ while 1:
         break
 
     # Set mode
-    print("Choose mode or ESC to exit")
-    print("[Modes]\n 1: Read current position\n 2: Store current position\n 3: Print stored position\n 4: Set stored position\n 5: Enable torque\n 6: Disable torque")
-    mode = input("Enter mode: ")
+    print("Choose gesture or ESC to exit")
+    print("[Modes]\n 1: Reset\n 2: Hug\n 3: Wave\n 4: Handshake")
+    mode = input("Enter gesture: ")
 
-    # Apply action
+    ## Apply action
     if mode == '1':
-        print("- Reading Abi's %s current position" % ABI_MODE_TO_STR[abiMode])
-        readPosition(motors)
-
+        print('- Reset')
+        actionArmBySide(motors)
+        
     if mode == '2':
-        print("- Storing Abi's %s current position" % ABI_MODE_TO_STR[abiMode])
-        storePosition(motors)
+        print("- Hug")
+        actionHug(motors)
 
     if mode == '3':
-        print("- Printing Abi's %s stored position" % ABI_MODE_TO_STR[abiMode])
-        printStoredPosition(motors, motors_position)
+        print("- Wave")
+        actionWave(motors)
 
     if mode == '4':
-        print("- Setting Abi's %s position" % ABI_MODE_TO_STR[abiMode])
-        setPosition(motors, motors_position)
+        print("- Handshake")
+        actionHandshake(motors)
+        
 
-    if mode == '5':
-        print("- Enabling torque")
-        setTorque(motors, TORQUE_ENABLE)
 
-    if mode == '6':
-        print("- Disabling torque")
-        setTorque(motors, TORQUE_DISABLE)
-
+    time.sleep(2)
 
     print("Press any key to continue\n")
 
+print("Reset position")
+actionArmBySide(motors)
+time.sleep(2)
 print("Disconnecting and turning off")
 groupBulkRead.clearParam()          # Clear bulkread parameter storage
 setTorque(motors, TORQUE_DISABLE)   # Disable torque
 portHandler.closePort()             # Close port
 print("Successfully disconnected")
+
+
+# initialise, open port etc
+# enable torque
+# add parameter storage
+# set speed
+# set goal pos
