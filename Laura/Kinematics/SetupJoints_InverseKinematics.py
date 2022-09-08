@@ -14,7 +14,7 @@ class SetupBiped:
         self.child = []
         self.sister = None
         self.a = a
-        self.q = q
+        self.q = q # joint angle
         self.pos=pos
         self.parent = parent
         self.b = b
@@ -262,6 +262,7 @@ j6.child = j7
 j8.child = j9
 j9.child = j10
 j10.child = j11
+j11.child = j12
 j12.child = j13
 
 

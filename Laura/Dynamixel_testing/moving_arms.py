@@ -49,7 +49,7 @@ DXL22_ID = 22
 DXL23_ID = 23
 
 BAUDRATE                    = 57600             # Dynamixel default baudrate : 57600
-DEVICENAME                  = '/dev/tty.usbserial-FT6RW7PK'    # Check which port is being used on your controller
+DEVICENAME                  = '/dev/tty.usbserial-FT62AKQ4'    # Check which port is being used on your controller
                                                 # ex) Windows: "COM1"   Linux: "/dev/ttyUSB0" Mac: "/dev/tty.usbserial-*"
 
 TORQUE_ENABLE               = 1                 # Value for enabling the torque
@@ -131,7 +131,6 @@ def moving_components(positions):
         index+=1
         
     
-
 def main():
     #DXL2_ID, DXL3_ID, DXL4_ID, DXL5_ID, DXL6_ID, DXL7_ID, 
     Dynamixels = [DXL19_ID, DXL20_ID, DXL24_ID, DXL21_ID, DXL22_ID, DXL23_ID]
@@ -177,14 +176,14 @@ def main():
     # UNCOMMENT HERE TO UNLOCK MOTOS IN 'DYNAMIXELS'
     # 'Dynamixels' array does not contain IDs 2 and 3 becuase we don't want to clear it. 
     # Add 2 and 3 into array here if you want them unlocked.
-    #Dynamixels = [DXL19_ID, DXL20_ID, DXL24_ID, DXL21_ID, DXL22_ID, DXL23_ID]
-    #for dynamixel in Dynamixels:
-    #    dxl_comm_result, dxl_error = packetHandler.write1ByteTxRx(
-    #        portHandler, dynamixel, ADDR_MX_TORQUE_ENABLE, TORQUE_DISABLE)
-    #    if dxl_comm_result != COMM_SUCCESS:
-    #        print("%s" % packetHandler.getTxRxResult(dxl_comm_result))
-    #    elif dxl_error != 0:
-    #        print("%s" % packetHandler.getRxPacketError(dxl_error))
+    Dynamixels = [DXL19_ID, DXL20_ID, DXL24_ID, DXL21_ID, DXL22_ID, DXL23_ID]
+    for dynamixel in Dynamixels:
+        dxl_comm_result, dxl_error = packetHandler.write1ByteTxRx(
+            portHandler, dynamixel, ADDR_MX_TORQUE_ENABLE, TORQUE_DISABLE)
+        if dxl_comm_result != COMM_SUCCESS:
+            print("%s" % packetHandler.getTxRxResult(dxl_comm_result))
+        elif dxl_error != 0:
+            print("%s" % packetHandler.getRxPacketError(dxl_error))
 
     # Close port
     portHandler.closePort()

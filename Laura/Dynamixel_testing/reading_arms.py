@@ -53,10 +53,9 @@ DXL22_ID = 22
 DXL23_ID = 23
 
 
-
 BAUDRATE = 57600             # Dynamixel default baudrate : 57600
 # Check which port is being used on your controller
-DEVICENAME = '/dev/tty.usbserial-FT6RW7PK'
+DEVICENAME = '/dev/tty.usbserial-FT62AKQ4'
                                               # ex) Windows: "COM1"   Linux: "/dev/ttyUSB0" Mac: "/dev/tty.usbserial-*"
 
 TORQUE_ENABLE = 1                 # Value for enabling the torque
