@@ -21,14 +21,7 @@ else:
 from dynamixel_sdk import * # Uses Dynamixel SDK library
 
 #********* DYNAMIXEL Model definition *********
-#***** (Use only one definition at a time) *****
-#MY_DXL = 'X_SERIES'       # X330 (5.0 V recommended), X430, X540, 2X430
 MY_DXL = 'MX_SERIES'    # MX series with 2.0 firmware update.
-# MY_DXL = 'PRO_SERIES'   # H54, H42, M54, M42, L54, L42
-# MY_DXL = 'PRO_A_SERIES' # PRO series with (A) firmware update.
-# MY_DXL = 'P_SERIES'     # PH54, PH42, PM54
-# MY_DXL = 'XL320'        # [WARNING] Operating Voltage : 7.4V
-
 
 # Control table address
 if MY_DXL == 'X_SERIES' or MY_DXL == 'MX_SERIES':
@@ -39,11 +32,10 @@ if MY_DXL == 'X_SERIES' or MY_DXL == 'MX_SERIES':
     ADDR_PRESENT_POSITION       = 132
     ADDR_PRESENT_VELOCITY       = 128
     ADDR_PRESENT_PWM            = 124
-    ADDR_PRESENT_CURRENT        = 126
-    DXL_MINIMUM_POSITION_VALUE  = 0         # Refer to the Minimum Position Limit of product eManual
-    DXL_MAXIMUM_POSITION_VALUE  = 4095      # Refer to the Maximum Position Limit of product eManual
+    ADDR_PRESENT_CURRENT        = 12
+    DXL_MINIMUM_POSITION_VALUE  = 1830         # Refer to the Minimum Position Limit of product eManual
+    DXL_MAXIMUM_POSITION_VALUE  = 2222      # Refer to the Maximum Position Limit of product eManual
     BAUDRATE                    = 57600
-    CURRENT_LIMIT               = 38
 
 
 # DYNAMIXEL Protocol Version (1.0 / 2.0)
@@ -61,9 +53,12 @@ TORQUE_ENABLE               = 1     # Value for enabling the torque
 TORQUE_DISABLE              = 0     # Value for disabling the torque
 DXL_MOVING_STATUS_THRESHOLD = 20    # Dynamixel moving status threshold
 
+OPERATING_MODE              = 5 #Cuurent-based position control Mode
+CURRENT_LIMIT               = 10
+
 index = 0
 dxl_goal_position = [DXL_MINIMUM_POSITION_VALUE, DXL_MAXIMUM_POSITION_VALUE]         # Goal position
-
+dxl_goal_current = 100
 
 # Initialize PortHandler instance
 # Set the port path
@@ -75,6 +70,7 @@ portHandler = PortHandler(DEVICENAME)
 # Get methods and members of Protocol1PacketHandler or Protocol2PacketHandler
 packetHandler = PacketHandler(PROTOCOL_VERSION)
 
+
 # Open port
 if portHandler.openPort():
     print("Succeeded to open the port")
@@ -83,7 +79,6 @@ else:
     print("Press any key to terminate...")
     getch()
     quit()
-
 
 # Set port baudrate
 if portHandler.setBaudRate(BAUDRATE):
@@ -107,12 +102,10 @@ while 1:
     print("Press any key to continue! (or press ESC to quit!)")
     if getch() == chr(0x1b):
         break
-
     # Write goal position
-    if (MY_DXL == 'XL320'): # XL320 uses 2 byte Position Data, Check the size of data in your DYNAMIXEL's control table
-        dxl_comm_result, dxl_error = packetHandler.write2ByteTxRx(portHandler, DXL_ID, ADDR_GOAL_POSITION, dxl_goal_position[index])
-    else:
-        dxl_comm_result, dxl_error = packetHandler.write4ByteTxRx(portHandler, DXL_ID, ADDR_GOAL_POSITION, dxl_goal_position[index])
+    dxl_comm_result, dxl_error = packetHandler.write4ByteTxRx(portHandler, DXL_ID, ADDR_GOAL_POSITION, dxl_goal_position[index])
+    dxl_comm_result, dxl_error = packetHandler.write4ByteTxRx(portHandler, DXL_ID, ADDR_GOAL_POSITION, dxl_goal_current)
+
     if dxl_comm_result != COMM_SUCCESS:
         print("%s" % packetHandler.getTxRxResult(dxl_comm_result))
     elif dxl_error != 0:
@@ -120,10 +113,7 @@ while 1:
 
     while 1:
         # Read present position
-        if (MY_DXL == 'XL320'): # XL320 uses 2 byte Position Data, Check the size of data in your DYNAMIXEL's control table
-            dxl_present_position, dxl_comm_result, dxl_error = packetHandler.read2ByteTxRx(portHandler, DXL_ID, ADDR_PRESENT_POSITION)
-        else:
-            dxl_present_position, dxl_comm_result, dxl_error = packetHandler.read4ByteTxRx(portHandler, DXL_ID, ADDR_PRESENT_POSITION)
+        dxl_present_position, dxl_comm_result, dxl_error = packetHandler.read4ByteTxRx(portHandler, DXL_ID, ADDR_PRESENT_POSITION)
         if dxl_comm_result != COMM_SUCCESS:
             print("%s" % packetHandler.getTxRxResult(dxl_comm_result))
         elif dxl_error != 0:
